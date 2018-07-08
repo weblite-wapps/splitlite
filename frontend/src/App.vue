@@ -22,6 +22,7 @@ import Balances from './components/Balances.vue'
 
 // helper
 import webliteHandler from './helper/functions/weblite.api'
+import reqHandler from './helper/functions/requests.js'
 // W
 const { W } = window
 
@@ -72,7 +73,13 @@ export default {
       return sum
     }
   },
-  created() { W && webliteHandler(this) },
+  created() { 
+    W && webliteHandler(this) 
+
+    reqHandler.fetchData().then(
+      res => console.log(res)
+    , err => console.log('Error ' + res))
+  },
 
   methods: {
     changePage() {

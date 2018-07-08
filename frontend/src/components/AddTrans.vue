@@ -65,10 +65,10 @@
       </div>
   </div>
 
-  <add-button v-if="showWarning === false" label="Add"/>
+  <add-button v-if="warning.show === false" label="Add"/>
   <div v-else :class="$style['warning']">
     <span> <i> warning </i> </span>
-    <span :class="$style['warning-text']"> {{ warningMsg }} </span>
+    <span :class="$style['warning-text']"> {{ warning.msg }} </span>
   </div>
 </div>
 </template>
@@ -92,9 +92,7 @@ export default {
     targets: [], // {user, value, equalValue}
 
     title: 'Weblite Lunch',
-    splitType: 'unequally',
-    
-    warningMsg: ''
+    splitType: 'equally'
   }),
   watch: {
       sumOfSources () {
@@ -102,17 +100,15 @@ export default {
       },
   },
   computed: {
-      showWarning () {
+      warning () {
           if (this.title.trim() === '') {
-              this.warningMsg = 'Enter Title first !'
-              return true
+              return ({show: true, msg: 'Enter transaction title!'})
           }
           if (this.splitType === 'unequally' && this.sumOfSources != this.sumOfTargets) {
-              this.warningMsg = 'Sum of sources and targets are not equal !'
-              return true
+              return ({show: true, msg: 'Sum of sources and targets are not equal !'})
           }
-
-          return false
+          
+          return ({show: false, msg: ''})
       },
       sumOfSources() {
           const sum = R.sum(this.sources.map(source => source.value))
@@ -139,12 +135,6 @@ export default {
             else
               this.targets.push( {user: this.users[0], value: 0, equalValue: 0} )
           }
-      },
-      emitTrans() {
-          // some proning
-
-          // build transaction object
-          
       }
   }
 }
