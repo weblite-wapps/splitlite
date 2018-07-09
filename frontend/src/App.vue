@@ -24,7 +24,7 @@ import Balances from './components/Balances.vue'
 import webliteHandler from './helper/functions/weblite.api'
 import reqHandler from './helper/functions/requests.js'
 // W
-const { W } = window
+const { W, R } = window
 
 
 export default {
@@ -57,22 +57,13 @@ export default {
   }),
   computed: {
     balances () {
-      let myBalancesSubGraph = this.balanceGraph.filter(balance => balance.source === this.username )
-      let myBalances = []
+      const myBalancesSubGraph = this.balanceGraph.filter(balance => balance.source === this.username )
 
-      for (let i = 0; i < myBalancesSubGraph.length; i++)
-        myBalances.push( {user: myBalancesSubGraph[i].target,
-                          value: myBalancesSubGraph[i].value} )
-
-      return myBalances
+      return R.map(balance => ({ user: balance.target, value: balance.value }),
+                  myBalancesSubGraph)
     },
     totalBalance () {
-      let sum = 0
-      for (let i = 0; i < this.balances.length; i++) {
-        sum += this.balances[i].value
-      }
-
-      return sum
+      return R.sum(R.map(balance => balance.value ,this.balances))
     }
   },
   created() { 

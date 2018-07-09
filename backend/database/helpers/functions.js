@@ -2,6 +2,31 @@ var models = require('../models')
 
 const R = require('ramda')
 
+// Helpers
+const updateGraphWithPaymentUnit = payment => balances => {
+  const index = R.findIndex((balance) => balance.source == payment.from && balance.target == payment.to, balances)
+  if (index == -1) {
+    balances.push( {source: payment.from, target: payment.to, value: payment.value} )
+    balances.push( {source: payment.to, target: payment.from, value: -1 * payment.value} )
+  } else {
+    const index = R.findIndex((balance) => balance.source == payment.to && balance.target == payment.from, balances)  
+    balances[index].value += payment.value
+    balances[inverseIndex].value -= payment.value
+  }
+  return balances
+}
+
+function updateGraph(transObj) {
+  return models.BalanceGraph.findOne({wisId: transObj.wisId})
+    .then(graph => {
+      const graphUpdater = R.pipe(...R.map(payment => updateGraphWithPaymentUnit(payment), transObj.payments))
+      const resBalance = graphUpdater(graph.balances)
+
+      return models.BalanceGraph.updateOne({wisId: transObj.wisId}, {balances: resBalance}).exec()
+    })
+    .catch(err => { throw err })
+}
+
 // Users
 exports.fetchUsers = function (wisId) {
   return models.User.find({wisId: wisId})
@@ -29,59 +54,6 @@ exports.fetchGraph = function(wisId) {
     .catch(err => {throw err})
 }
 
-function updateGraph(transObj) {
-  return models.BalanceGraph.findOne({wisId: transObj.wisId})
-    .then(graph => {
-      const payments = transObj.payments
-      var balances = graph.balances
-
-      for (let i = 0; i < payments.length; i++) {
-        console.log(i + ' : start')        
-        console.log('payment\n' + payments[i])
-        console.log('balances\n' + balances)
-        
-        // const index = R.findIndex(R.propEq('source', payments[i].from) && R.propEq('target', payments[i].to), balances)
-        let index = -1
-        for (let j = 0; j < balances.length; j++) {
-          if (balances[j].source == payments[i].from && balances[j].target == payments[i].to) {
-            index = j
-            break
-          }
-        }
-
-        console.log('index : ' + index)
-        
-        if (index == -1) {
-          console.log('alive 1')
-          
-          balances.push( {source: payments[i].from, target: payments[i].to, value: payments[i].value} )
-          balances.push( {source: payments[i].to, target: payments[i].from, value: -1 * payments[i].value} )
-        } else {
-          console.log('alive 2')
-          // const inverseIndex = R.findIndex(R.and(R.propEq('source', payments[i].to),
-          // R.propEq('target', payments[i].from)), balances)
-          let inverseIndex = -1
-          for (let j = 0; j < balances.length; j++) {
-            if (balances[j].source == payments[i].to && balances[j].target == payments[i].from) {
-              inverseIndex = j
-              break
-            }
-          }
-          
-          console.log(balances[index])
-          balances[index].value += payments[i].value
-          console.log()
-          balances[inverseIndex].value -= payments[i].value
-        }
-
-        console.log(i + ' : end')
-      }
-
-      return models.BalanceGraph.updateOne({wisId: transObj.wisId}, {balances: balances}).exec()
-    })
-    .catch(err => console.log('err in updateGraph: ' + err))
-}
-
 // Transaction
 exports.fetchTransactions = function(wisId) {
   return models.Transaction.find({wisId: wisId})
@@ -89,12 +61,6 @@ exports.fetchTransactions = function(wisId) {
 exports.addTransaction = function(transObj) {
   const trans = new models.Transaction(transObj)
   return trans.save()
-    .then(trans => {
-        console.log('Alive 0')
-        return updateGraph(trans) 
-      })
-    .catch(err => {
-      console.log('err in addTrans() : ' + err)
-      throw err
-    })
+    .then(trans => { return updateGraph(trans) })
+    .catch(err => { throw err })
 }
