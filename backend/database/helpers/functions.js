@@ -9,7 +9,7 @@ const updateGraphWithPaymentUnit = payment => balances => {
     balances.push( {source: payment.from, target: payment.to, value: payment.value} )
     balances.push( {source: payment.to, target: payment.from, value: -1 * payment.value} )
   } else {
-    const index = R.findIndex((balance) => balance.source == payment.to && balance.target == payment.from, balances)  
+    const inverseIndex = R.findIndex((balance) => balance.source == payment.to && balance.target == payment.from, balances)  
     balances[index].value += payment.value
     balances[inverseIndex].value -= payment.value
   }

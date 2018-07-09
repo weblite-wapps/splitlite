@@ -1,7 +1,7 @@
 <template>
 <div :class="$style['add-trans']">
   <div :class="$style['inputs']"> 
-      <div :class="$style['title']"> 
+      <div :class="$style['title']">
         <span :class="$style['title-label']"> Title : </span>
         <input :class="$style['title-input']" v-model="title"/>
       </div>
@@ -96,29 +96,69 @@ export default {
   }),
   watch: {
       sumOfSources () {
-        this.targets = this.targets.map(target => ({user: target.user, value: target.value, equalValue: this.sumOfSources / this.targets.length}))
+        this.targets = this.targets.map(target => ({
+            user: target.user,
+            value: target.value, 
+            equalValue: this.sumOfSources / this.targets.length}))
       },
   },
   computed: {
-      warning () {
-          if (this.title.trim() === '') {
+      warning() {
+          if (this.title.trim() === '') 
               return ({show: true, msg: 'Enter transaction title!'})
-          }
-          if (this.splitType === 'unequally' && this.sumOfSources != this.sumOfTargets) {
+          if (this.splitType === 'unequally' && this.sumOfSources != this.sumOfTargets)
               return ({show: true, msg: 'Sum of sources and targets are not equal !'})
-          }
-          
           return ({show: false, msg: ''})
       },
       sumOfSources() {
-          const sum = R.sum(this.sources.map(source => source.value))
-          return sum
+          return R.sum(R.map(source => source.value, this.sources))
       },
       sumOfTargets() {
-          return R.sum(this.targets.map(target => target.value))
+          return R.sum(R.map(target => target.value, this.targets))
       },
       curTargetProperty() {
           return (this.splitType === 'unequally') ? 'value' : 'equalValue' 
+      },
+      resultTrans() {
+        let uniqueSources = R.filter(source => source.value != 0, R.map(name => ({ user: name,
+        value: R.sum(R.map(user => user.value, R.filter(src => src.user == name, this.sources)))
+        }), this.users))
+    
+        let uniqueTargets = R.filter(target => target.value != 0, R.map(name => ({ user: name,
+        value: R.sum(R.map(user => user[this.curTargetProperty], R.filter(tar => tar.user == name, this.targets)))
+        }), this.users))
+
+        R.forEach(src => {
+            const srcIndex = R.findIndex(source => source.user == src.user, uniqueSources)
+            const tarIndex = R.findIndex(target => target.user == src.user, uniqueTargets)
+            
+            if (srcIndex >= 0 && tarIndex >= 0) {
+                if (uniqueSources[srcIndex].value >= uniqueTargets[tarIndex].value) {
+                    uniqueSources[srcIndex].value -= uniqueTargets[tarIndex].value
+                    uniqueTargets[tarIndex].value = 0
+                } else {
+                    uniqueTargets[tarIndex].value -= uniqueSources[srcIndex].value
+                    uniqueSources[srcIndex].value = 0
+                }
+            }
+        }, uniqueSources)
+
+        const finalSources = R.filter(source => source.value != 0, uniqueSources)
+        const finalTargets = R.filter(target => target.value != 0, uniqueTargets)
+        const sumOfFinalSources = R.sum(R.map(src => src.value, finalSources))
+
+        let payments = []
+        R.forEach(target => {
+            const ownings = R.map(src => ({from: target.user, to: src.user, value: src.value / sumOfFinalSources * target.value}), finalSources)
+            payments = R.insertAll(0, ownings, payments)
+        }, finalTargets)
+        
+        return ({
+            title: this.title,
+            sources: finalSources,
+            payments: payments 
+        })
+
       }
   },
   methods: {
@@ -135,6 +175,10 @@ export default {
             else
               this.targets.push( {user: this.users[0], value: 0, equalValue: 0} )
           }
+      },
+      addTrans() {
+          const transObj = this.resultTrans
+          // send trans to the server
       }
   }
 }

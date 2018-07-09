@@ -9,6 +9,7 @@ var userSchema = new Schema({
 })
 
 var transSchema = new Schema({
+  title: String,
   sources: [{ user: String, value: Number }],
   payments: [{ from: String, to: String, value: Number }],
   wisId: String

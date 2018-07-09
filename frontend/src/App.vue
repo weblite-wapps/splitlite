@@ -5,7 +5,9 @@
     @changePage="changePage()"
   />
   <balances :balances="balances" v-if="curPage === 'balances'"/>
-  <add-tans v-if="curPage === 'addTrans'" :users="users"/>
+  <keep-alive>
+    <add-trans v-if="curPage === 'addTrans'" :users="users"/>
+  </keep-alive>
   
   <total-balance :total-balance="totalBalance" v-if="curPage === 'balances'"/>
 
@@ -17,7 +19,7 @@
 // components
 import Header from './components/Header.vue'
 import TotalBalance from './components/TotalBalance.vue'
-import AddTans from './components/AddTrans.vue'
+import AddTrans from './components/AddTrans.vue'
 import Balances from './components/Balances.vue'
 
 // helper
@@ -34,7 +36,7 @@ export default {
     Header,
     TotalBalance,
     Balances,
-    AddTans
+    AddTrans
   },
 
   data: () => ({
