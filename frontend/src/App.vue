@@ -51,7 +51,9 @@ export default {
     ],
     transactions: [],
 
-    curPage: 'addTrans' // balances, addTrans
+    curPage: 'addTrans', // balances, addTrans
+    wisId: undefined
+
   }),
   computed: {
     balances () {
@@ -78,7 +80,7 @@ export default {
 
     reqHandler.fetchData().then(
       res => console.log(res)
-    , err => console.log('Error ' + res))
+    , err => console.log('Error ' + err))
   },
 
   methods: {
