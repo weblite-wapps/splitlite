@@ -4,7 +4,7 @@
       Total Balance :
   </div>
 
-  <div :class="(totalBalance >= 0) ? $style['total-balance-value-positive'] : $style['total-balance-value-negative']"> 
+  <div :class="(totalBalance < 0) ? $style['total-balance-value-positive'] : $style['total-balance-value-negative']"> 
       {{ getPresentingForm(totalBalance) }}
   </div>
 </div>

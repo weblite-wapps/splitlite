@@ -6,7 +6,7 @@ exports.connect2db = function (dbName) {
   var db = mongoose.connection
   db.on('error', console.error.bind(console, 'connection error:'));
   db.once('open', function() {
-    db.db.dropDatabase()
+    // db.db.dropDatabase()
     console.log('Connected to (' + dbName + ') database!')
   })
 }

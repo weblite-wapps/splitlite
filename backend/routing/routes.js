@@ -39,7 +39,7 @@ router.post('/users/add', function(req, res) {
 
   dbHelper.addUser(username, wisId)
     .then((user) => res.status(200).end())
-    .catch(err => res.status(500).end())
+    .catch(err => res.status(200).end())
 })
 
 // Graph

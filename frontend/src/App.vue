@@ -6,7 +6,12 @@
   />
   <balances :balances="balances" v-if="curPage === 'balances'"/>
   <keep-alive>
-    <add-trans v-if="curPage === 'addTrans'" :users="users"/>
+    <add-trans 
+      v-if="curPage === 'addTrans'" 
+      :users="users" 
+      :wis-id="wisId"
+      @addTrans="addTrans"
+    />
   </keep-alive>
   
   <total-balance :total-balance="totalBalance" v-if="curPage === 'balances'"/>
@@ -24,7 +29,7 @@ import Balances from './components/Balances.vue'
 
 // helper
 import webliteHandler from './helper/functions/weblite.api'
-import reqHandler from './helper/functions/requests.js'
+import requests from './helper/functions/requests.js'
 // W
 const { W, R } = window
 
@@ -40,21 +45,14 @@ export default {
   },
 
   data: () => ({
-    username: 'reza',
-    users: ['reza', 'ali', 'mostafa', 'mohammad'],
+    username: 'radium',
+    users: [],
     
-    balanceGraph: [
-      {source: 'reza', target: 'ali', value: 2000},
-      {source: 'ali', target: 'reza', value: -2000},
-      {source: 'reza', target: 'mostafa', value: -5000},
-      {source: 'mostafa', target: 'reza', value: 5000},
-      {source: 'ali', target: 'mohammad', value: 20000},
-      {source: 'mohammad', target: 'ali', value: -20000}
-    ],
+    balanceGraph: [],
     transactions: [],
 
-    curPage: 'addTrans', // balances, addTrans
-    wisId: undefined
+    curPage: 'balances', // balances, addTrans
+    wisId: "0"
 
   }),
   computed: {
@@ -71,14 +69,36 @@ export default {
   created() { 
     W && webliteHandler(this) 
 
-    reqHandler.fetchData().then(
-      res => console.log(res)
-    , err => console.log('Error ' + err))
+    requests.addUser(this.username, this.wisId)
+      .then(this.fetchData())
+      .catch(err => console.log(err))
   },
 
   methods: {
     changePage() {
+      this.fetchData()
       this.curPage = (this.curPage === 'balances') ? 'addTrans' : 'balances'
+    },
+    fetchData() {
+      requests.fetchUsers(this.wisId)
+        .then(users => {
+          this.users = R.map(user => user.username, users)
+          return requests.fetchGraph(this.wisId)
+        })
+        .then(graph => {
+          this.balanceGraph = graph.balances
+        })
+        .catch(err => console.log(err))
+    },
+    addTrans(transObj) {
+      requests.addTrans(transObj)
+        .then(res => {
+          return this.fetchData()
+        })
+        .then(res => {
+          this.changePage()
+        })
+        .catch(err => console.log(err))
     }
   }
 }

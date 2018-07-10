@@ -1,71 +1,38 @@
 <template>
 <div :class="$style['add-trans']">
   <div :class="$style['inputs']"> 
-      <div :class="$style['title']">
-        <span :class="$style['title-label']"> Title : </span>
-        <input :class="$style['title-input']" v-model="title"/>
-      </div>
-      <div :class="$style['sources']">
-          <div :class="$style['section-label']"> Sources : </div>
-          <div :class="$style['input-items']">
-            <div v-for="(source, index) in sources" :key="index" :class="$style['input-item']">
-                <div :class="$style['user-select']"> 
-                    <select v-model="sources[index].user">
-                        <option
-                        v-for="(user, selectIndex) in users" 
-                        :value="user"
-                        :key="selectIndex">
-                            {{ user }}
-                        </option>
-                    </select>
-                </div>
-                <div :class="$style['value-input']">
-                    <input v-model="sources[index].value" type="number"/>
-                </div>
-            </div>
-            <div :class="$style['add-user']">
-                <i @click="addSource()"> add </i>
-            </div>
-          </div>
-      </div>
-      <div :class="$style['targets']">
-          <div :class="$style['section-label']"> Targets : </div>
-          <div :class="$style['input-items']">
-            <div v-for="(target, index) in targets " :key="index" :class="$style['input-item']">
-                <div :class="$style['user-select']"> 
-                    <select v-model="targets[index].user">
-                        <option
-                        v-for="(user, selectIndex) in users" 
-                        :value="user"
-                        :key="selectIndex">
-                            {{ user }}
-                        </option>
-                    </select>
-                </div>
-                <div :class="$style['value-input']">
-                    <input v-model="targets[index][curTargetProperty]" type="number" :readonly="splitType === 'equally'"/>
-                </div>
-            </div>
-            <div :class="$style['add-user']">
-                <i @click="addTarget()"> add </i>
-            </div>
-          </div>
-      </div>
+      <Title :title.sync="title"/>
+      <SourcesSelect
+        :sources="sources"
+        :users="users"
+        @remove="removeSource"
+        @add="addSource"
+      />
+      <TargetsSelect
+        :targets="targets"
+        :users="users"
+        :curProperty="curTargetProperty"
+        :splitType="splitType"
+        @remove="removeTarget"
+        @add="addTarget"
+      />
 
       <div :class="$style['type-section']">
-          <span :class="$style['split-caption']"> split type : </span>
+          <span :class="$style['split-caption']"> split type </span>
           <div :class="$style['types']">
-            <div :class="$style['split-type']"> 
-                <input type="radio" id="equally" value="equally" v-model="splitType"/> Equally 
+            <div :class="[$style['split-type'], 'noselect']" @click="splitType = 'equally'"> 
+                <div :class="[$style['checkbox'], splitType == 'equally' ? $style['selected'] : $style['unselected']]"/>
+                <span :class="$style['split-label']"> Equally </span> 
             </div>
-            <div :class="$style['split-type']"> 
-                <input type="radio" id="unequally" value="unequally" v-model="splitType"/> Unequally
+            <div :class="[$style['split-type'], 'noselect']" @click="splitType = 'unequally'"> 
+                <div :class="[$style['checkbox'], splitType == 'unequally' ? $style['selected'] : $style['unselected']]"/>
+                <span :class="$style['split-label']"> UnEqually </span> 
             </div>
           </div>
       </div>
   </div>
 
-  <add-button v-if="warning.show === false" label="Add"/>
+  <add-button v-if="warning.show === false" label="Add" @click="addTrans"/>
   <div v-else :class="$style['warning']">
     <span> <i> warning </i> </span>
     <span :class="$style['warning-text']"> {{ warning.msg }} </span>
@@ -77,21 +44,27 @@
 <script>
 // components
 import AddButton from '../helper/components/AddButton.vue'
+import SourcesSelect from './addTrans/SourcesSelect.vue'
+import TargetsSelect from './addTrans/TargetsSelect.vue'
+import Title from './addTrans/Title.vue'
 // W
 const { R } = window
 
 
 export default {
   name: 'AddTrans',
-  props: ['users'],
+  props: ['users', 'wisId'],
   components: {
-    AddButton
+    AddButton,
+    SourcesSelect,
+    TargetsSelect,
+    Title
   },
   data: () => ({
     sources: [], // {user, value}
     targets: [], // {user, value, equalValue}
 
-    title: 'Weblite Lunch',
+    title: '',
     splitType: 'equally'
   }),
   watch: {
@@ -156,30 +129,36 @@ export default {
         return ({
             title: this.title,
             sources: finalSources,
-            payments: payments 
+            payments: payments,
+            wisId: this.wisId
         })
-
       }
   },
   methods: {
-      addSource() {
-          if (this.users.length > 0)
-            this.sources.push( {user: this.users[0], value: 0} )
-      },
-      addTarget() {
-          if (this.users.length > 0) {
+    addTrans() {
+        this.$emit('addTrans', this.resultTrans)
+    },
+    addTarget() {
+        if (this.users.length > 0) {
             if (this.splitType === 'equally') {
-              this.targets = this.targets.map(target => ({user: target.user, value: target.value, equalValue: this.sumOfSources / (this.targets.length + 1)}))
-              this.targets.push( {user: this.users[0], value: 0, equalValue: this.sumOfSources / (this.targets.length + 1)} )
+                this.targets.push( {user: this.users[0], value: 0, equalValue: this.sumOfSources / (this.targets.length + 1)} )
+                this.targets = this.targets.map(target => ({user: target.user, value: target.value, equalValue: this.sumOfSources / (this.targets.length)}))
             }
             else
-              this.targets.push( {user: this.users[0], value: 0, equalValue: 0} )
-          }
-      },
-      addTrans() {
-          const transObj = this.resultTrans
-          // send trans to the server
-      }
+                this.targets.push( {user: this.users[0], value: 0, equalValue: 0} )
+        }
+    },
+    removeTarget(index) {
+        this.targets.splice(index, 1);
+        this.targets = this.targets.map(target => ({user: target.user, value: target.value, equalValue: this.sumOfSources / (this.targets.length)}))
+    },
+    addSource() {
+        if (this.users.length > 0)
+        this.sources.push( {user: this.users[0], value: 0} )
+    },
+    removeSource(index) {
+        this.sources.splice(index, 1);
+    }
   }
 }
 </script>
@@ -239,91 +218,6 @@ export default {
   display: none;
 }
 
-.title {
-  width: 330px;
-  min-height: 40px;
-
-  color: white;
-
-  border: none;
-  border-bottom: 1px rgba(143, 143, 143, 0.637) solid;
-
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-
-  margin: 10px;
-  padding-bottom: 2px;
-}
-
-.title-input {
-  width: 272px;
-  margin-left: 10px;
-}
-
-.sources {
-  width: 330px;
-  min-height: 35%;
-  max-height: 35%;
-
-  color: white;
-  border: none;
-  border-bottom: 1px rgba(143, 143, 143, 0.637) solid;
-
-  display: flex;
-  flex-direction: column;
-
-  margin-bottom: 10px;
-
-  overflow: scroll;
-}
-
-.targets {
-  width: 330px;
-  min-height: 43%;
-  max-height: 43%;
-
-  color: white;
-  border: none;
-  border-bottom: 1px rgba(143, 143, 143, 0.637) solid;
-
-  display: flex;
-  flex-direction: column;
-
-  margin-bottom: 10px;
-}
-
-.section-label {
-    margin-bottom: 5px;
-}
-
-.input-items {
-  max-height: inherit;
-  min-height: inherit;
-
-  display: flex;
-  flex-direction: column;
-
-  align-items: center;
-}
-
-.input-item {
-  width: 300px;
-  min-height: 25px;
-
-  display: flex;
-  flex-direction: row;
-
-  align-items: center;
-  justify-content: space-around;
-  margin: 5px 0;
-}
-
-.add-user {
-  color: rgb(230, 172, 96);
-  margin-bottom: 5px;
-}
-
 .type-section {
   width: 330px;
   min-height: 40px;
@@ -336,8 +230,59 @@ export default {
   margin-bottom: 10px;
 }
 
+.types {
+  display: flex;
+  flex-direction: row;
+
+  max-height: 20px;
+}
+
 .split-type {
-    margin-left: 10px;
+  margin-left: 10px;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.split-caption {
+  letter-spacing: 1px;
+  margin-bottom: 5px;
+  color: rgb(167, 167, 167);
+}
+
+.split-label {
+  letter-spacing: 1px;
+  color: rgb(240, 237, 206);
+  font-size: 14px;
+}
+
+.checkbox.unselected {
+    width: 15px;
+    height: 16px;
+    
+    border: 1px solid rgb(240, 219, 101);
+    border-radius: 5px;
+
+    margin-right: 5px;
+
+    cursor: pointer;
+
+    -webkit-transition: all 0.2s ease;
+    transition: all 0.2s ease;
+}
+.checkbox.selected {
+    width: 15px;
+    height: 16px;
+    
+    background: rgb(240, 219, 101);
+    border: 1px solid rgb(240, 219, 101);
+    border-radius: 5px;
+
+    margin-right: 5px;
+
+    -webkit-transition: all 0.2s ease;
+    transition: all 0.2s ease;
 }
 
 </style>
