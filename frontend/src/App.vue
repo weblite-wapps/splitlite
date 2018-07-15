@@ -72,8 +72,8 @@ export default {
     W && webliteHandler(this) 
 
     requests.addUser(this.username, this.wisId)
-      .then(this.fetchData())
-      .catch(err => console.log(err))
+      .then(this.fetchData)
+      .catch(console.log)
   },
 
   methods: {
@@ -90,17 +90,15 @@ export default {
         .then(graph => {
           this.balanceGraph = graph.balances
         })
-        .catch(err => console.log(err))
+        .catch(console.log)
     },
     addTrans(transObj) {
       requests.addTrans(transObj)
-        .then(() => {
-          return this.fetchData()
-        })
+        .then(this.fetchData)
         .then(() => {
           this.changePage()
         })
-        .catch(err => console.log(err))
+        .catch(console.log)
     }
   }
 }

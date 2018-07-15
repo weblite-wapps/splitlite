@@ -47,7 +47,7 @@ export default {
 }
 
 .total-balance-value-positive {
-    color: rgb(14, 134, 14);
+    color: rgb(14, 138, 14);
 }
 
 .total-balance-value-negative {
