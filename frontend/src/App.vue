@@ -1,22 +1,22 @@
 <template>
 <div :class="$style.root">
-  <Header 
+  <Header
     :curPage="curPage"
     @changePage="changePage()"
-  /> 
+  />
   <transition name="balances-move">
     <keep-alive>
-      <balances 
-        :balances="balances" 
+      <balances
+        :balances="balances"
         v-if="curPage === 'balances'"
       />
     </keep-alive>
   </transition>
   <transition name="add-trans-move">
     <keep-alive>
-      <add-trans 
-        v-if="curPage === 'addTrans'" 
-        :users="users" 
+      <add-trans
+        v-if="curPage === 'addTrans'"
+        :users="users"
         :wis-id="wisId"
         @addTrans="addTrans"
       />
@@ -52,12 +52,12 @@ export default {
   data: () => ({
     username: 'radium',
     users: [],
-    
+
     balanceGraph: [],
     transactions: [],
 
     curPage: 'balances', // balances, addTrans
-    wisId: "0"
+    wisId: "1"
 
   }),
   computed: {
@@ -68,8 +68,8 @@ export default {
                   myBalancesSubGraph)
     }
   },
-  created() { 
-    W && webliteHandler(this) 
+  created() {
+    W && webliteHandler(this)
 
     requests.addUser(this.username, this.wisId)
       .then(this.fetchData)

@@ -10,13 +10,13 @@ export default {
   fetchUsers (wisId) {
     return request
       .get('http://localhost:3000/users/fetch')
-      .query({ wisId: wisId })
+      .query({ wisId })
       .then(res => res.body)
   },
   fetchGraph (wisId) {
     return request
       .get('http://localhost:3000/graph/fetch')
-      .query({ wisId: wisId })
+      .query({ wisId })
       .then(res => res.body)
   },
   addTrans (transObj) {
