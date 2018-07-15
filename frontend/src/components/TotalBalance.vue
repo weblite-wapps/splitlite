@@ -1,10 +1,10 @@
 <template>
 <div :class="$style['total-balance']">
-  <div :class="$style['total-balance-caption']"> 
+  <div :class="$style['total-balance-caption']">
       Total Balance
   </div>
 
-  <div :class="(totalBalance < 0) ? $style['total-balance-value-positive'] : $style['total-balance-value-negative']"> 
+  <div :class="$style[`total-balance-value-${(totalBalance < 0) ? 'positive' : 'negative'}`]">
       {{ getPresentingForm(totalBalance) }}
   </div>
 </div>
@@ -12,11 +12,14 @@
 
 
 <script>
+// Mixin
 import pricePresenterMixin from '../mixins/pricePresenterMixin.js'
 
 export default {
   name: 'TotalBalance',
+
   mixins: [pricePresenterMixin],
+
   props: ['totalBalance'],
 }
 </script>
@@ -26,18 +29,14 @@ export default {
 .total-balance {
   width: 310px;
   min-height: 50px;
-
-  background: linear-gradient(rgb(236, 192, 60), rgb(221, 166, 2));  
-
+  background: linear-gradient(rgb(236, 192, 60), rgb(221, 166, 2));
   display: flex;
   flex-direction: row;
-  
   margin: 10px auto;
   align-items: center;
   justify-content: space-between;
   padding: 0 10px;
   border-radius: 2px;
-
   position: fixed;
   bottom: 0;
 }

@@ -24,6 +24,7 @@
 <script>
 export default {
   name: 'Header',
+
   props: ['currentPage'],
 }
 </script>
@@ -33,7 +34,6 @@ export default {
 .header {
   width: 350px;
   background: linear-gradient(#FACC43, #FABC09);
-
   position: absolute;
   top: 0;
 }
@@ -42,14 +42,11 @@ export default {
   width: 330px;
   min-height: 50px;
   max-height: 50px;
-
   background: linear-gradient(#FACC43, #FABC09);
-
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0 10px;
-
   position: inherit;
 }
 
@@ -57,10 +54,8 @@ export default {
   font-size: 16px;
   font-weight: 530;
   letter-spacing: 1.5px;
-
   margin-right: 5px;
   margin-left: 5px;
-
   color: black;
 }
 

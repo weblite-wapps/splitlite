@@ -1,10 +1,10 @@
 <template>
 <div :class="$style['balance-item']">
-  <div :class="$style['balance-item-name']"> 
+  <div :class="$style['balance-item-name']">
       {{ user }}
   </div>
 
-  <div :class="(value < 0) ? $style['balance-item-value-positive'] : $style['balance-item-value-negative']"> 
+  <div :class="(value < 0) ? $style['balance-item-value-positive'] : $style['balance-item-value-negative']">
       {{ getPresentingForm(value) }}
   </div>
 </div>
@@ -12,11 +12,14 @@
 
 
 <script>
+// Mixin
 import pricePresenterMixin from '../mixins/pricePresenterMixin.js'
 
 export default {
   name: 'BalanceItem',
+
   mixins: [pricePresenterMixin],
+
   props: ['user', 'value'],
 }
 </script>
@@ -30,7 +33,7 @@ export default {
   background: #EAEAEA;
   display: flex;
   flex-direction: row;
-  
+
   align-items: center;
   justify-content: space-between;
   padding: 0 7px;

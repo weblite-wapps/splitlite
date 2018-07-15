@@ -1,18 +1,18 @@
 <template>
-<div :class="$style['add-trans']" 
+<div :class="$style['add-trans']"
     :style="curHeight">
-  <div :class="$style['inputs']"> 
+  <div :class="$style['inputs']">
     <Title :title.sync="title"/>
     <div :class="$style['type-section']">
         <span :class="$style['split-caption']"> split type </span>
         <div :class="$style['types']">
-        <div :class="[$style['split-type'], 'noselect']" @click="splitType = 'equally'"> 
+        <div :class="[$style['split-type'], 'noselect']" @click="splitType = 'equally'">
             <div :class="[$style['checkbox'], splitType == 'equally' ? $style['selected'] : $style['unselected']]"/>
-            <span :class="$style['split-label']"> Equally </span> 
+            <span :class="$style['split-label']"> Equally </span>
         </div>
-        <div :class="[$style['split-type'], 'noselect']" @click="splitType = 'unequally'"> 
+        <div :class="[$style['split-type'], 'noselect']" @click="splitType = 'unequally'">
             <div :class="[$style['checkbox'], splitType == 'unequally' ? $style['selected'] : $style['unselected']]"/>
-            <span :class="$style['split-label']"> UnEqually </span> 
+            <span :class="$style['split-label']"> UnEqually </span>
         </div>
         </div>
     </div>
@@ -77,13 +77,13 @@ export default {
       sumOfSources () {
         this.targets = this.targets.map(target => ({
             user: target.user,
-            value: target.value, 
+            value: target.value,
             equalValue: this.sumOfSources / this.targets.length}))
       },
   },
   computed: {
       warning() {
-          if (this.title.trim() === '') 
+          if (this.title.trim() === '')
               return ({show: true, msg: 'Enter transaction title!'})
           if (this.splitType === 'unequally' && this.sumOfSources != this.sumOfTargets)
               return ({show: true, msg: 'Sum of sources and targets are not equal !'})
@@ -96,13 +96,13 @@ export default {
           return R.sum(R.map(target => target.value, this.targets))
       },
       curTargetProperty() {
-          return (this.splitType === 'unequally') ? 'value' : 'equalValue' 
+          return (this.splitType === 'unequally') ? 'value' : 'equalValue'
       },
       resultTrans() {
         let uniqueSources = R.filter(source => source.value != 0, R.map(name => ({ user: name,
         value: R.sum(R.map(user => user.value, R.filter(src => src.user == name, this.sources)))
         }), this.users))
-    
+
         let uniqueTargets = R.filter(target => target.value != 0, R.map(name => ({ user: name,
         value: R.sum(R.map(user => user[this.curTargetProperty], R.filter(tar => tar.user == name, this.targets)))
         }), this.users))
@@ -110,7 +110,7 @@ export default {
         R.forEach(src => {
             const srcIndex = R.findIndex(source => source.user == src.user, uniqueSources)
             const tarIndex = R.findIndex(target => target.user == src.user, uniqueTargets)
-            
+
             if (srcIndex >= 0 && tarIndex >= 0) {
                 if (uniqueSources[srcIndex].value >= uniqueTargets[tarIndex].value) {
                     uniqueSources[srcIndex].value -= uniqueTargets[tarIndex].value
@@ -131,7 +131,7 @@ export default {
             const ownings = R.map(src => ({from: target.user, to: src.user, value: src.value / sumOfFinalSources * target.value}), finalSources)
             payments = R.insertAll(0, ownings, payments)
         }, finalTargets)
-        
+
         return ({
             title: this.title,
             sources: finalSources,
@@ -177,18 +177,13 @@ export default {
 .add-trans {
   width: 350px;
   height: calc(100% - 100px);
-  
   display: flex;
   flex-direction: column;
-
   align-items: flex-start;
   align-content: space-around;
-
   overflow-x: hidden;
   overflow-y: hidden;
-
   background: lightgray;
-
   position: absolute;
   top: 50px;
 }
@@ -201,32 +196,23 @@ export default {
 .inputs {
   width: 350px;
   height: 100%;
-
   display: flex;
   flex-direction: column;
-
   align-items: center;
   align-content: space-around;
-
   overflow: hidden;
-
   background: rgb(73, 73, 73);
 }
 
 .warning {
   width: 320px;
   min-height: 50px;
-
   display: flex;
   flex-direction: row;
-  
   align-items: center;
-
   background: #e42b2b;
   color: white;
-
   padding: 0 15px;
-
   position: fixed;
   bottom: 0;
 }
@@ -243,14 +229,10 @@ export default {
 .type-section {
   width: 330px;
   min-height: 40px;
-
   color: white;
-
   display: flex;
   flex-direction: row;
-
   margin-bottom: 10px;
-
   position: relative;
   bottom: 0px;
 }
@@ -258,13 +240,11 @@ export default {
 .types {
   display: flex;
   flex-direction: row;
-
   max-height: 20px;
 }
 
 .split-type {
   margin-left: 10px;
-
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -285,27 +265,20 @@ export default {
 .checkbox.unselected {
     width: 15px;
     height: 16px;
-
     border: 1px solid rgb(240, 189, 21);
     border-radius: 5px;
-
     margin-right: 5px;
-
     cursor: pointer;
-
     -webkit-transition: all 0.2s ease;
     transition: all 0.2s ease;
 }
 .checkbox.selected {
     width: 15px;
     height: 16px;
-    
     background: rgb(240, 189, 21);
     border: 1px solid rgb(240, 189, 21);
     border-radius: 5px;
-
     margin-right: 5px;
-
     -webkit-transition: all 0.2s ease;
     transition: all 0.2s ease;
 }
