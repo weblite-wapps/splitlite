@@ -4,7 +4,7 @@ export default {
   addUser (username, wisId) {
     return request
       .post('http://localhost:3000/users/add')
-      .send({ username: username, wisId: wisId })
+      .send({ username, wisId })
       .then(res => res)
   },
   fetchUsers (wisId) {

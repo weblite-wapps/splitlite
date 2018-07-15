@@ -95,9 +95,7 @@ export default {
     addTrans(transObj) {
       requests.addTrans(transObj)
         .then(this.fetchData)
-        .then(() => {
-          this.changePage()
-        })
+        .then(this.changePage)
         .catch(console.log)
     }
   }
