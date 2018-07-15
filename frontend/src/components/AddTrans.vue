@@ -1,42 +1,48 @@
 <template>
-<div :class="$style['add-trans']">
+<div :class="$style['add-trans']" 
+    :style="curHeight">
   <div :class="$style['inputs']"> 
-      <Title :title.sync="title"/>
-      <SourcesSelect
+    <Title :title.sync="title"/>
+    <div :class="$style['type-section']">
+        <span :class="$style['split-caption']"> split type </span>
+        <div :class="$style['types']">
+        <div :class="[$style['split-type'], 'noselect']" @click="splitType = 'equally'"> 
+            <div :class="[$style['checkbox'], splitType == 'equally' ? $style['selected'] : $style['unselected']]"/>
+            <span :class="$style['split-label']"> Equally </span> 
+        </div>
+        <div :class="[$style['split-type'], 'noselect']" @click="splitType = 'unequally'"> 
+            <div :class="[$style['checkbox'], splitType == 'unequally' ? $style['selected'] : $style['unselected']]"/>
+            <span :class="$style['split-label']"> UnEqually </span> 
+        </div>
+        </div>
+    </div>
+    <div :class="$style['users-section']">
+    <SourcesSelect
         :sources="sources"
         :users="users"
         @remove="removeSource"
         @add="addSource"
-      />
-      <TargetsSelect
+    />
+    <TargetsSelect
         :targets="targets"
         :users="users"
         :curProperty="curTargetProperty"
         :splitType="splitType"
         @remove="removeTarget"
         @add="addTarget"
-      />
-
-      <div :class="$style['type-section']">
-          <span :class="$style['split-caption']"> split type </span>
-          <div :class="$style['types']">
-            <div :class="[$style['split-type'], 'noselect']" @click="splitType = 'equally'"> 
-                <div :class="[$style['checkbox'], splitType == 'equally' ? $style['selected'] : $style['unselected']]"/>
-                <span :class="$style['split-label']"> Equally </span> 
-            </div>
-            <div :class="[$style['split-type'], 'noselect']" @click="splitType = 'unequally'"> 
-                <div :class="[$style['checkbox'], splitType == 'unequally' ? $style['selected'] : $style['unselected']]"/>
-                <span :class="$style['split-label']"> UnEqually </span> 
-            </div>
-          </div>
-      </div>
+    />
+    </div>
   </div>
 
-  <add-button v-if="warning.show === false" label="Add" @click="addTrans"/>
-  <div v-else :class="$style['warning']">
-    <span> <i> warning </i> </span>
-    <span :class="$style['warning-text']"> {{ warning.msg }} </span>
-  </div>
+  <transition name="warning-move">
+    <add-button v-if="warning.show === false" label="Add" @click="addTrans"/>
+  </transition>
+  <transition name="add-button-move">
+    <div v-if="warning.show === true" :class="$style['warning']">
+        <span> <i> warning </i> </span>
+        <span :class="$style['warning-text']"> {{ warning.msg }} </span>
+    </div>
+  </transition>
 </div>
 </template>
 
@@ -132,6 +138,9 @@ export default {
             payments: payments,
             wisId: this.wisId
         })
+      },
+      curHeight() {
+          return {height: document.getElementsByClassName("add-trans").offsetWidth + -100 + "px"}
       }
   },
   methods: {
@@ -167,7 +176,8 @@ export default {
 <style module>
 .add-trans {
   width: 350px;
-  height: 100%;
+  height: calc(100% - 100px);
+  
   display: flex;
   flex-direction: column;
 
@@ -175,14 +185,23 @@ export default {
   align-content: space-around;
 
   overflow-x: hidden;
-  overflow-y: scroll;
+  overflow-y: hidden;
 
   background: lightgray;
+
+  position: absolute;
+  top: 50px;
+}
+
+.users-section {
+  width: 330px;
+  height: 100%;
 }
 
 .inputs {
   width: 350px;
   height: 100%;
+
   display: flex;
   flex-direction: column;
 
@@ -195,7 +214,7 @@ export default {
 }
 
 .warning {
-  width: 350px;
+  width: 320px;
   min-height: 50px;
 
   display: flex;
@@ -207,6 +226,9 @@ export default {
   color: white;
 
   padding: 0 15px;
+
+  position: fixed;
+  bottom: 0;
 }
 
 .warning-text {
@@ -228,6 +250,9 @@ export default {
   flex-direction: row;
 
   margin-bottom: 10px;
+
+  position: relative;
+  bottom: 0px;
 }
 
 .types {
@@ -260,8 +285,8 @@ export default {
 .checkbox.unselected {
     width: 15px;
     height: 16px;
-    
-    border: 1px solid rgb(240, 219, 101);
+
+    border: 1px solid rgb(240, 189, 21);
     border-radius: 5px;
 
     margin-right: 5px;
@@ -275,8 +300,8 @@ export default {
     width: 15px;
     height: 16px;
     
-    background: rgb(240, 219, 101);
-    border: 1px solid rgb(240, 219, 101);
+    background: rgb(240, 189, 21);
+    border: 1px solid rgb(240, 189, 21);
     border-radius: 5px;
 
     margin-right: 5px;
@@ -284,5 +309,4 @@ export default {
     -webkit-transition: all 0.2s ease;
     transition: all 0.2s ease;
 }
-
 </style>

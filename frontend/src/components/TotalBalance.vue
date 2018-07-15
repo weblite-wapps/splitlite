@@ -1,7 +1,7 @@
 <template>
 <div :class="$style['total-balance']">
   <div :class="$style['total-balance-caption']"> 
-      Total Balance :
+      Total Balance
   </div>
 
   <div :class="(totalBalance < 0) ? $style['total-balance-value-positive'] : $style['total-balance-value-negative']"> 
@@ -26,14 +26,20 @@ export default {
 .total-balance {
   width: 310px;
   min-height: 50px;
-  background: rgb(255, 232, 182);
+
+  background: linear-gradient(rgb(236, 192, 60), rgb(221, 166, 2));  
+
   display: flex;
   flex-direction: row;
   
-  margin: 10px;
+  margin: 10px auto;
   align-items: center;
   justify-content: space-between;
   padding: 0 10px;
+  border-radius: 2px;
+
+  position: fixed;
+  bottom: 0;
 }
 
 .total-balance-caption {

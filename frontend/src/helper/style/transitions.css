@@ -1,0 +1,75 @@
+/* Bodies */
+.balances-move-enter-active, .balances-move-leave-active {
+  transition: all .3s;
+}
+
+.balances-move-enter {
+  opacity: 0;
+}
+
+.balances-move-leave-to {
+  opacity: 0;
+}
+
+.add-trans-move-enter-active, .add-trans-move-leave-active {
+  transition: all .3s;
+}
+
+.add-trans-move-enter {
+  opacity: 0;
+}
+
+.add-trans-move-leave-to {
+  opacity: 0;
+}
+
+/* Headers */
+.balances-header-move-enter-active, .balances-header-move-leave-active {
+  transition: all .3s;
+}
+
+.balances-header-move-enter {
+  transform: translateX(-350px);
+}
+
+.balances-header-move-leave-to {
+  transform: translateX(-350px);
+}
+
+.add-trans-header-move-enter-active, .add-trans-header-move-leave-active {
+  transition: all .3s;
+}
+
+.add-trans-header-move-enter {
+  transform: translateX(350px);
+}
+
+.add-trans-header-move-leave-to {
+  transform: translateX(350px);
+}
+
+/* Warning */
+.warning-move-enter-active, .warning-move-leave-active {
+  transition: all .2s;
+}
+
+.warning-move-enter {
+  transform: translateY(50px);
+}
+
+.warning-move-leave-to {
+  transform: translateY(50px);
+}
+
+/* Add Button */
+.add-button-move-enter-active, .add-button-move-leave-active {
+  transition: all .2s;
+}
+
+.add-button-move-enter {
+  transform: translateY(50px);
+}
+
+.add-button-move-leave-to {
+  transform: translateY(50px);
+}

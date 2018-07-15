@@ -15,7 +15,7 @@ export default {
 
 <style module>
 .button-container {
-  width: 100%;
+  width: inherit;
   min-height: 50px;
   background: inherit;
   outline: none;
@@ -26,6 +26,9 @@ export default {
   align-self: flex-end;
   background: #2582b8;
   color: white;
+
+  position: fixed;
+  bottom: 0;
 }
 
 .button-container:hover {

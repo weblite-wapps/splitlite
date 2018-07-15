@@ -27,7 +27,6 @@
 
 
 <script>
-const { R } = window
 
 export default {
   name: 'SourceUnit',

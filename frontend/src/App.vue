@@ -3,19 +3,25 @@
   <Header 
     :curPage="curPage"
     @changePage="changePage()"
-  />
-  <balances :balances="balances" v-if="curPage === 'balances'"/>
-  <keep-alive>
-    <add-trans 
-      v-if="curPage === 'addTrans'" 
-      :users="users" 
-      :wis-id="wisId"
-      @addTrans="addTrans"
-    />
-  </keep-alive>
-  
-  <total-balance :total-balance="totalBalance" v-if="curPage === 'balances'"/>
-
+  /> 
+  <transition name="balances-move">
+    <keep-alive>
+      <balances 
+        :balances="balances" 
+        v-if="curPage === 'balances'"
+      />
+    </keep-alive>
+  </transition>
+  <transition name="add-trans-move">
+    <keep-alive>
+      <add-trans 
+        v-if="curPage === 'addTrans'" 
+        :users="users" 
+        :wis-id="wisId"
+        @addTrans="addTrans"
+      />
+    </keep-alive>
+  </transition>
 </div>
 </template>
 
@@ -23,7 +29,7 @@
 <script>
 // components
 import Header from './components/Header.vue'
-import TotalBalance from './components/TotalBalance.vue'
+
 import AddTrans from './components/AddTrans.vue'
 import Balances from './components/Balances.vue'
 
@@ -39,7 +45,6 @@ export default {
 
   components: {
     Header,
-    TotalBalance,
     Balances,
     AddTrans
   },
@@ -61,9 +66,6 @@ export default {
 
       return R.map(balance => ({ user: balance.target, value: balance.value }),
                   myBalancesSubGraph)
-    },
-    totalBalance () {
-      return R.sum(R.map(balance => balance.value ,this.balances))
     }
   },
   created() { 
@@ -92,10 +94,10 @@ export default {
     },
     addTrans(transObj) {
       requests.addTrans(transObj)
-        .then(res => {
+        .then(() => {
           return this.fetchData()
         })
-        .then(res => {
+        .then(() => {
           this.changePage()
         })
         .catch(err => console.log(err))
@@ -109,13 +111,16 @@ export default {
 .root {
   width: 350px;
   height: 100%;
-  background: rgb(77, 77, 77);
+  background: rgb(85, 85, 85);
   overflow: hidden;
 
   display: flex;
   flex-direction: column;
   align-content: space-between;
   align-items: center;
+
+  position: absolute;
+  top: 0;
 }
 
 .customize {

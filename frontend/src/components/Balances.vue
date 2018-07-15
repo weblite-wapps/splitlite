@@ -1,19 +1,25 @@
 <template>
 <div :class="$style['balances']">
-  
-  <BalanceItem 
-    v-for="(balanceItem, index) in balances"
-    :user="balanceItem.user"
-    :value="balanceItem.value"
-    :key="index"
+  <div :class="$style['items']">
+    <BalanceItem 
+      v-for="(balanceItem, index) in balances"
+      :user="balanceItem.user"
+      :value="balanceItem.value"
+      :key="index"
+    />
+  </div>
+  <total-balance 
+    :total-balance="totalBalance"
   />
-
 </div>
 </template>
 
 
 <script>
+import TotalBalance from './TotalBalance.vue'
 import BalanceItem from './BalanceItem.vue'
+
+const { R } = window
 
 export default {
   name: 'Balances',
@@ -21,7 +27,13 @@ export default {
     balances: Array
   },
   components: {
-      BalanceItem
+      BalanceItem,
+      TotalBalance
+  },
+  computed: {
+    totalBalance () {
+        return R.sum(R.map(balance => balance.value, this.balances))
+    } 
   }
 }
 </script>
@@ -38,6 +50,17 @@ export default {
   margin-bottom: 0;
   align-items: flex-start;
   align-content: space-around;
+
+  position: absolute;
+  top: 50px;
+  z-index: 10;
+}
+
+.items {
+  width: 330px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 
   overflow-x: hidden;
   overflow-y: scroll;

@@ -14,7 +14,7 @@ export default {
   name: 'Header',
   props: [],
   watch: {
-    title(newTitle, oldTitle) {
+    title(newTitle) {
       this.$emit('update:title', newTitle)
     }
   },

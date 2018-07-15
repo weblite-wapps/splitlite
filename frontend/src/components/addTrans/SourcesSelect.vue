@@ -35,8 +35,8 @@ export default {
 <style module>
 .sources {
   width: 330px;
-  min-height: 35%;
-  max-height: 35%;
+  max-height: 42%;
+  min-height: 42%;
 
   color: white;
   border: none;
@@ -47,6 +47,9 @@ export default {
 
   margin-bottom: 10px;
   overflow: hidden;
+
+  -webkit-transition: all 0.5s ease;
+  transition: all 0.5s ease;
 }
 
 .section-label {
@@ -64,11 +67,14 @@ export default {
 
   align-items: center;
   overflow: scroll;
+
+  -webkit-transition: height 0.5s ease;
+  transition: height 0.5s ease;
 }
 
 .add-user {
   color: rgb(230, 172, 96);
-  margin-top: 5px;
+  margin-top: 10px;
   margin-bottom: 5px;
 }
 

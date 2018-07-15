@@ -26,7 +26,8 @@ export default {
 .balance-item {
   width: 316px;
   min-height: 50px;
-  background: rgb(197, 197, 197);
+  background: rgb(207, 207, 207);
+  background: #EAEAEA;
   display: flex;
   flex-direction: row;
   
@@ -34,10 +35,14 @@ export default {
   justify-content: space-between;
   padding: 0 7px;
   margin-bottom: 10px;
+  border-radius: 2px;
+
+  box-shadow: 0px 2px 5px 1px rgba(32, 32, 32, 0.514);
 }
 
 .balance-item-name {
   font-size: 16px;
+  color: rgb(77, 77, 77)
 }
 
 .balance-item-value-positive {

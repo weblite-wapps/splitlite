@@ -52,17 +52,14 @@ export default {
 <style module>
 .targets {
   width: 330px;
-  min-height: 47%;
-  max-height: 47%;
+  min-height: 48%;
+  max-height: 48%;
 
   color: white;
-  border: none;
-  border-bottom: 1px rgba(143, 143, 143, 0.233) solid;
 
   display: flex;
   flex-direction: column;
 
-  margin-bottom: 10px;
   overflow: hidden;
 }
 
@@ -85,7 +82,7 @@ export default {
 
 .add-user {
   color: rgb(230, 172, 96);
-  margin-top: 5px;
+  margin-top: 10px;
   margin-bottom: 5px;
 }
 

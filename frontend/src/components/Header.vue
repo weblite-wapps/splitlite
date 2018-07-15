@@ -1,19 +1,22 @@
 <template>
 <div :class="$style.header">
-  <div v-if="curPage === 'balances'" :class="$style['header-balances']">
-    <span :class="$style['header-title']">SplitLite</span>
-    <i :class="[$style['header-add'], 'noselect']" @click="$emit('changePage')">
-      add
-    </i>
-  </div>
+  <transition name="add-trans-header-move">
+    <div v-show="curPage === 'addTrans'" :class="$style['header-section']">
+      <i :class="[$style['header-icon'], 'noselect']" @click="$emit('changePage')">
+        keyboard_arrow_left
+      </i>
+      <span :class="$style['header-title']">Add Transaction</span>
+    </div>
+  </transition>
 
-  <div v-if="curPage === 'addTrans'" :class="$style['header-add-trans']">
-    <i :class="[$style['header-icon'], 'noselect']" @click="$emit('changePage')">
-      undo
-    </i>
-    <span :class="$style['header-title']">Add Transaction</span>
-  </div>
-
+  <transition name="balances-header-move">
+    <div v-show="curPage === 'balances'" :class="$style['header-section']">
+      <span :class="$style['header-title']">SplitLite</span>
+      <i :class="[$style['header-add'], 'noselect']" @click="$emit('changePage')">
+        add
+      </i>
+    </div>
+  </transition>
 </div>
 </template>
 
@@ -28,27 +31,26 @@ export default {
 
 <style module>
 .header {
-  width: inherit;
+  width: 350px;
+  background: linear-gradient(#FACC43, #FABC09);
+
+  position: absolute;
+  top: 0;
 }
 
-.header-balances {
+.header-section {
+  width: 330px;
   min-height: 50px;
+  max-height: 50px;
 
-  background: rgb(233, 168, 27);
+  background: linear-gradient(#FACC43, #FABC09);
+
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0 10px;
-}
 
-.header-add-trans {
-  min-height: 50px;
-
-  background: rgb(233, 168, 27);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 10px;
+  position: inherit;
 }
 
 .header-title {
@@ -56,10 +58,13 @@ export default {
   font-weight: 530;
   letter-spacing: 1.5px;
 
-  padding-left: 10px;
+  margin-right: 5px;
+  margin-left: 5px;
+
+  color: black;
 }
 
 .header-icon {
-  padding-right: 10px;
+  margin-left: -7px;
 }
 </style>
