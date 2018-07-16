@@ -8,20 +8,20 @@
     />
 
     <div :class="$style['users-section']">
-    <SourcesSelect
-        :sources="sources"
-        :users="users"
-        @remove="removeSource"
-        @add="addSource"
-    />
-    <TargetsSelect
-        :targets="targets"
-        :users="users"
-        :curProperty="curTargetProperty"
-        :splitType="splitType"
-        @remove="removeTarget"
-        @add="addTarget"
-    />
+        <SourcesSelect
+            :sources="sources"
+            :users="users"
+            @remove="removeSource"
+            @add="addSource"
+        />
+        <TargetsSelect
+            :targets="targets"
+            :users="users"
+            :curProperty="curTargetProperty"
+            :splitType="splitType"
+            @remove="removeTarget"
+            @add="addTarget"
+        />
     </div>
   </div>
 
@@ -68,7 +68,6 @@ export default {
   data: () => ({
     sources: [], // {user, value}
     targets: [], // {user, value, equalValue}
-
     title: '',
     splitType: 'equally'
   }),
@@ -128,7 +127,7 @@ export default {
         const finalSources = R.filter(source => source.value != 0, uniqueSources)
         const finalTargets = R.filter(target => target.value != 0, uniqueTargets)
         const sumOfFinalSources = R.sum(R.map(src => src.value, finalSources))
-
+        
         let payments = []
         R.forEach(target => {
             const ownings = R.map(src => ({from: target.user, to: src.user, value: src.value / sumOfFinalSources * target.value}), finalSources)
@@ -138,7 +137,7 @@ export default {
         return ({
             title: this.title,
             sources: finalSources,
-            payments: payments,
+            payments,
             wisId: this.wisId
         })
       },
