@@ -1,21 +1,12 @@
 <template>
-<div :class="$style['add-trans']"
-    :style="curHeight">
+<div :class="$style['add-trans']" :style="curHeight">
   <div :class="$style['inputs']">
     <Title :title.sync="title"/>
-    <div :class="$style['type-section']">
-        <span :class="$style['split-caption']"> split type </span>
-        <div :class="$style['types']">
-        <div :class="[$style['split-type'], 'noselect']" @click="splitType = 'equally'">
-            <div :class="[$style['checkbox'], splitType == 'equally' ? $style['selected'] : $style['unselected']]"/>
-            <span :class="$style['split-label']"> Equally </span>
-        </div>
-        <div :class="[$style['split-type'], 'noselect']" @click="splitType = 'unequally'">
-            <div :class="[$style['checkbox'], splitType == 'unequally' ? $style['selected'] : $style['unselected']]"/>
-            <span :class="$style['split-label']"> UnEqually </span>
-        </div>
-        </div>
-    </div>
+
+    <typeSelection
+        :splitType.sync="splitType"
+    />
+
     <div :class="$style['users-section']">
     <SourcesSelect
         :sources="sources"
@@ -34,14 +25,15 @@
     </div>
   </div>
 
-  <transition name="warning-move">
+  <transition name="add-button-move">
     <add-button v-if="warning.show === false" label="Add" @click="addTrans"/>
   </transition>
-  <transition name="add-button-move">
-    <div v-if="warning.show === true" :class="$style['warning']">
-        <span> <i> warning </i> </span>
-        <span :class="$style['warning-text']"> {{ warning.msg }} </span>
-    </div>
+
+  <transition name="warning-move">
+    <warning
+      :show="warning.show"
+      :message="warning.msg"
+    />
   </transition>
 </div>
 </template>
@@ -49,9 +41,11 @@
 
 <script>
 // components
-import AddButton from '../helper/components/AddButton.vue'
 import SourcesSelect from './addTrans/SourcesSelect.vue'
 import TargetsSelect from './addTrans/TargetsSelect.vue'
+import TypeSelection from './addTrans/TypeSelection.vue'
+import AddButton from '../helper/components/AddButton.vue'
+import Warning from './addTrans/Warning.vue'
 import Title from './addTrans/Title.vue'
 // W
 const { R } = window
@@ -59,13 +53,18 @@ const { R } = window
 
 export default {
   name: 'AddTrans',
+
   props: ['users', 'wisId'],
+
   components: {
-    AddButton,
     SourcesSelect,
     TargetsSelect,
+    TypeSelection,
+    AddButton,
+    Warning,
     Title
   },
+
   data: () => ({
     sources: [], // {user, value}
     targets: [], // {user, value, equalValue}
@@ -73,6 +72,7 @@ export default {
     title: '',
     splitType: 'equally'
   }),
+
   watch: {
       sumOfSources () {
         this.targets = this.targets.map(target => ({
@@ -81,12 +81,15 @@ export default {
             equalValue: this.sumOfSources / this.targets.length}))
       },
   },
+
   computed: {
       warning() {
           if (this.title.trim() === '')
               return ({show: true, msg: 'Enter transaction title!'})
           if (this.splitType === 'unequally' && this.sumOfSources != this.sumOfTargets)
               return ({show: true, msg: 'Sum of sources and targets are not equal !'})
+          if (this.resultTrans.payments.length == 0)
+              return ({show: true, msg: 'No payment needed sofar!'})
           return ({show: false, msg: ''})
       },
       sumOfSources() {
@@ -204,82 +207,9 @@ export default {
   background: rgb(73, 73, 73);
 }
 
-.warning {
-  width: 320px;
-  min-height: 50px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  background: #e42b2b;
-  color: white;
-  padding: 0 15px;
-  position: fixed;
-  bottom: 0;
-}
-
-.warning-text {
-  max-width: 250px;
-  padding-left: 15px;
-}
-
 ::-webkit-scrollbar {
   display: none;
 }
 
-.type-section {
-  width: 330px;
-  min-height: 40px;
-  color: white;
-  display: flex;
-  flex-direction: row;
-  margin-bottom: 10px;
-  position: relative;
-  bottom: 0px;
-}
 
-.types {
-  display: flex;
-  flex-direction: row;
-  max-height: 20px;
-}
-
-.split-type {
-  margin-left: 10px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-}
-
-.split-caption {
-  letter-spacing: 1px;
-  margin-bottom: 5px;
-  color: rgb(167, 167, 167);
-}
-
-.split-label {
-  letter-spacing: 1px;
-  color: rgb(240, 237, 206);
-  font-size: 14px;
-}
-
-.checkbox.unselected {
-    width: 15px;
-    height: 16px;
-    border: 1px solid rgb(240, 189, 21);
-    border-radius: 5px;
-    margin-right: 5px;
-    cursor: pointer;
-    -webkit-transition: all 0.2s ease;
-    transition: all 0.2s ease;
-}
-.checkbox.selected {
-    width: 15px;
-    height: 16px;
-    background: rgb(240, 189, 21);
-    border: 1px solid rgb(240, 189, 21);
-    border-radius: 5px;
-    margin-right: 5px;
-    -webkit-transition: all 0.2s ease;
-    transition: all 0.2s ease;
-}
 </style>

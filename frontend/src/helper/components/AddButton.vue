@@ -8,6 +8,7 @@
 <script>
 export default {
   name: 'AddButton',
+  
   props: ['label'],
 }
 </script>
@@ -26,7 +27,6 @@ export default {
   align-self: flex-end;
   background: #2582b8;
   color: white;
-
   position: fixed;
   bottom: 0;
 }
