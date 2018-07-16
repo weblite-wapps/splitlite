@@ -1,7 +1,7 @@
 <template>
 <div :class="$style['type-section']">
   <span :class="$style['split-caption']"> split type </span>
-  
+
   <div :class="$style['types']">
     <checkbox
       label="Equally"
@@ -38,10 +38,7 @@ export default {
   }),
 
   methods: {
-    changeType(type) {
-      console.log('type changed to' + type)
-      this.$emit('update:splitType', type)
-    }
+    changeType(type) { this.$emit('update:splitType', type) },
   }
 }
 </script>

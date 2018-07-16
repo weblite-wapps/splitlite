@@ -1,7 +1,7 @@
 <template>
-<div v-if="show === true" :class="$style['warning']">
+<div v-if="show === true" class="warning">
   <span> <i> warning </i> </span>
-  <span :class="$style['warning-text']"> {{ message }} </span>
+  <span class="warning-text">{{ message }}</span>
 </div>
 </template>
 
@@ -15,7 +15,7 @@ export default {
 </script>
 
 
-<style module>
+<style scoped>
 .warning {
   width: 320px;
   min-height: 50px;

@@ -1,11 +1,9 @@
 <template>
-<div :class="$style['add-trans']" :style="curHeight">
+<div :class="$style['add-trans']">
   <div :class="$style['inputs']">
     <Title :title.sync="title"/>
 
-    <typeSelection
-        :splitType.sync="splitType"
-    />
+    <typeSelection :splitType.sync="splitType" />
 
     <div :class="$style['users-section']">
         <SourcesSelect
@@ -14,10 +12,11 @@
             @remove="removeSource"
             @add="addSource"
         />
+
         <TargetsSelect
             :targets="targets"
             :users="users"
-            :curProperty="curTargetProperty"
+            :curProperty="currentTargetProperty"
             :splitType="splitType"
             @remove="removeTarget"
             @add="addTarget"
@@ -26,13 +25,13 @@
   </div>
 
   <transition name="add-button-move">
-    <add-button v-if="warning.show === false" label="Add" @click="addTrans"/>
+    <add-button v-if="warningProperty.show === false" label="Add" @click="addTrans"/>
   </transition>
 
   <transition name="warning-move">
-    <warning
-      :show="warning.show"
-      :message="warning.msg"
+    <Warning
+      :show="warningProperty.show"
+      :message="warningProperty.msg"
     />
   </transition>
 </div>
@@ -45,7 +44,7 @@ import SourcesSelect from './addTrans/SourcesSelect.vue'
 import TargetsSelect from './addTrans/TargetsSelect.vue'
 import TypeSelection from './addTrans/TypeSelection.vue'
 import AddButton from '../helper/components/AddButton.vue'
-import Warning from './addTrans/Warning.vue'
+import Warning from '../helper/components/Warning.vue'
 import Title from './addTrans/Title.vue'
 // W
 const { R } = window
@@ -82,32 +81,32 @@ export default {
   },
 
   computed: {
-      warning() {
-          if (this.title.trim() === '')
-              return ({show: true, msg: 'Enter transaction title!'})
+      warningProperty() {
+          if (!this.title.trim())
+              return ({ show: true, msg: 'Enter transaction title!' })
           if (this.splitType === 'unequally' && this.sumOfSources != this.sumOfTargets)
-              return ({show: true, msg: 'Sum of sources and targets are not equal !'})
-          if (this.resultTrans.payments.length == 0)
-              return ({show: true, msg: 'No payment needed sofar!'})
-          return ({show: false, msg: ''})
+              return ({ show: true, msg: 'Sum of sources and targets are not equal !' })
+          if (!this.resultTrans.payments.length)
+              return ({ show: true, msg: 'No payment needed sofar!' })
+          return ({ show: false, msg: '' })
       },
-      sumOfSources() {
-          return R.sum(R.map(source => source.value, this.sources))
-      },
-      sumOfTargets() {
-          return R.sum(R.map(target => target.value, this.targets))
-      },
-      curTargetProperty() {
-          return (this.splitType === 'unequally') ? 'value' : 'equalValue'
-      },
-      resultTrans() {
-        let uniqueSources = R.filter(source => source.value != 0, R.map(name => ({ user: name,
-        value: R.sum(R.map(user => user.value, R.filter(src => src.user == name, this.sources)))
-        }), this.users))
 
-        let uniqueTargets = R.filter(target => target.value != 0, R.map(name => ({ user: name,
-        value: R.sum(R.map(user => user[this.curTargetProperty], R.filter(tar => tar.user == name, this.targets)))
-        }), this.users))
+      sumOfSources() { return R.sum(R.pluck('value', this.sources)) },
+
+      sumOfTargets() { return R.sum(R.pluck('value', this.targets)) },
+
+      currentTargetProperty() { return (this.splitType === 'unequally') ? 'value' : 'equalValue' },
+
+      resultTrans() {
+        const sourcesFunc = name => R.filter(R.propEq('user', name), this.sources)
+        const targetsFunc = name => R.filter(R.propEq('user', name), this.targets)
+        const sourcesSumFunc = name => R.sum(R.map(R.prop('value'), sourcesFunc(name)))
+        const targetsSumFunc = name => R.sum(R.pluck(this.currentTargetProperty, targetsFunc(name)))
+        const sources = R.map(user => ({ user, value: sourcesSumFunc(user) }), this.users)
+        const targets = R.map(user => ({ user, value: targetsSumFunc(user) }), this.users)
+
+        let uniqueSources = R.filter(R.prop('value'), sources)
+        let uniqueTargets = R.filter(R.prop('value'), targets)
 
         R.forEach(src => {
             const srcIndex = R.findIndex(source => source.user == src.user, uniqueSources)
@@ -127,7 +126,7 @@ export default {
         const finalSources = R.filter(source => source.value != 0, uniqueSources)
         const finalTargets = R.filter(target => target.value != 0, uniqueTargets)
         const sumOfFinalSources = R.sum(R.map(src => src.value, finalSources))
-        
+
         let payments = []
         R.forEach(target => {
             const ownings = R.map(src => ({from: target.user, to: src.user, value: src.value / sumOfFinalSources * target.value}), finalSources)
@@ -141,35 +140,41 @@ export default {
             wisId: this.wisId
         })
       },
-      curHeight() {
-          return {height: document.getElementsByClassName("add-trans").offsetWidth + -100 + "px"}
-      }
   },
+
   methods: {
-    addTrans() {
-        this.$emit('addTrans', this.resultTrans)
+    changeEqualValueTarget() {
+      this.targets = R.map(({ user, value }) => ({
+        user,
+        value,
+        equalValue: this.sumOfSources / (this.targets.length),
+      }), this.targets)
     },
+
+    addTrans() { this.$emit('addTrans', this.resultTrans) },
+
     addTarget() {
-        if (this.users.length > 0) {
-            if (this.splitType === 'equally') {
-                this.targets.push( {user: this.users[0], value: 0, equalValue: this.sumOfSources / (this.targets.length + 1)} )
-                this.targets = this.targets.map(target => ({user: target.user, value: target.value, equalValue: this.sumOfSources / (this.targets.length)}))
-            }
-            else
-                this.targets.push( {user: this.users[0], value: 0, equalValue: 0} )
+      if (this.users.length) {
+        if (this.splitType === 'equally') {
+          this.targets.push({
+            user: this.users[0],
+            value: 0,
+            equalValue: this.sumOfSources / (this.targets.length + 1),
+          })
+          this.changeEqualValueTarget()
         }
+        else this.targets.push( {user: this.users[0], value: 0, equalValue: 0} )
+      }
     },
+
     removeTarget(index) {
-        this.targets.splice(index, 1);
-        this.targets = this.targets.map(target => ({user: target.user, value: target.value, equalValue: this.sumOfSources / (this.targets.length)}))
+      this.targets.splice(index, 1)
+      this.changeEqualValueTarget()
     },
-    addSource() {
-        if (this.users.length > 0)
-        this.sources.push( {user: this.users[0], value: 0} )
-    },
-    removeSource(index) {
-        this.sources.splice(index, 1);
-    }
+
+    addSource() { if (this.users.length) this.sources.push({ user: this.users[0], value: 0 }) },
+
+    removeSource(index) { this.sources.splice(index, 1) },
   }
 }
 </script>
@@ -178,7 +183,7 @@ export default {
 <style module>
 .add-trans {
   width: 350px;
-  height: calc(100% - 100px);
+  height: calc(100% - 50px);
   display: flex;
   flex-direction: column;
   align-items: flex-start;
