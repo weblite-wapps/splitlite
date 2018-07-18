@@ -46,6 +46,9 @@ import TypeSelection from './addTrans/TypeSelection.vue'
 import AddButton from '../helper/components/AddButton.vue'
 import Warning from '../helper/components/Warning.vue'
 import Title from './addTrans/Title.vue'
+// helper
+import { extractUniqueLists, simplifyTransLists, extractPaymentsAndBuildTransObject } from '../helper/functions/transactionBuilder.js'
+
 // W
 const { R } = window
 
@@ -86,7 +89,7 @@ export default {
               return ({ show: true, msg: 'Enter transaction title!' })
           if (this.splitType === 'unequally' && this.sumOfSources != this.sumOfTargets)
               return ({ show: true, msg: 'Sum of sources and targets are not equal !' })
-          if (!this.resultTrans.payments.length)
+          if (!this.resultTrans || !this.resultTrans.payments.length)
               return ({ show: true, msg: 'No payment needed sofar!' })
           return ({ show: false, msg: '' })
       },
@@ -98,47 +101,11 @@ export default {
       currentTargetProperty() { return (this.splitType === 'unequally') ? 'value' : 'equalValue' },
 
       resultTrans() {
-        const sourcesFunc = name => R.filter(R.propEq('user', name), this.sources)
-        const targetsFunc = name => R.filter(R.propEq('user', name), this.targets)
-        const sourcesSumFunc = name => R.sum(R.map(R.prop('value'), sourcesFunc(name)))
-        const targetsSumFunc = name => R.sum(R.pluck(this.currentTargetProperty, targetsFunc(name)))
-        const sources = R.map(user => ({ user, value: sourcesSumFunc(user) }), this.users)
-        const targets = R.map(user => ({ user, value: targetsSumFunc(user) }), this.users)
-
-        let uniqueSources = R.filter(R.prop('value'), sources)
-        let uniqueTargets = R.filter(R.prop('value'), targets)
-
-        R.forEach(src => {
-            const srcIndex = R.findIndex(source => source.user == src.user, uniqueSources)
-            const tarIndex = R.findIndex(target => target.user == src.user, uniqueTargets)
-
-            if (srcIndex >= 0 && tarIndex >= 0) {
-                if (uniqueSources[srcIndex].value >= uniqueTargets[tarIndex].value) {
-                    uniqueSources[srcIndex].value -= uniqueTargets[tarIndex].value
-                    uniqueTargets[tarIndex].value = 0
-                } else {
-                    uniqueTargets[tarIndex].value -= uniqueSources[srcIndex].value
-                    uniqueSources[srcIndex].value = 0
-                }
-            }
-        }, uniqueSources)
-
-        const finalSources = R.filter(source => source.value != 0, uniqueSources)
-        const finalTargets = R.filter(target => target.value != 0, uniqueTargets)
-        const sumOfFinalSources = R.sum(R.map(src => src.value, finalSources))
-
-        let payments = []
-        R.forEach(target => {
-            const ownings = R.map(src => ({from: target.user, to: src.user, value: src.value / sumOfFinalSources * target.value}), finalSources)
-            payments = R.insertAll(0, ownings, payments)
-        }, finalTargets)
-
-        return ({
-            title: this.title,
-            sources: finalSources,
-            payments,
-            wisId: this.wisId
-        })
+        const transBuilder = R.compose(extractPaymentsAndBuildTransObject(this.title, this.wisId),
+                             simplifyTransLists,
+                             extractUniqueLists(this.users, this.currentTargetProperty))
+        
+        return transBuilder(this.sources, this.targets)
       },
   },
 
