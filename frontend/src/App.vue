@@ -46,7 +46,7 @@ export default {
   },
 
   data: () => ({
-    username: 'ali',
+    username: 'reza',
     wisId: '2',
     users: [],
     balanceGraph: [],
