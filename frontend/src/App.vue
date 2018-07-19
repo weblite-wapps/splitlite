@@ -46,8 +46,8 @@ export default {
   },
 
   data: () => ({
-    username: '',
-    wisId: '',
+    username: 'ali',
+    wisId: '2',
     users: [],
     balanceGraph: [],
     transactions: [],
@@ -63,7 +63,10 @@ export default {
     }
   },
 
-  created() { W && webliteHandler(this) },
+  created() {
+    W && webliteHandler(this)
+    this.addUser()
+  },
 
   methods: {
     addUser() {

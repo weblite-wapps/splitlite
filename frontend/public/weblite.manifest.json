@@ -1,0 +1,16 @@
+{
+  "name": "splitlite",
+  "id": "5b502b48e8ac737dd0225991",
+  "instancable": true,
+  "creator": false,
+  "inline": true,
+  "shareDB": false,
+  "userInfo": true,
+  "width": 352,
+  "height": 452,
+  "servIndexes": {
+    "inline": "index",
+    "main": "index",
+    "customize": "index"
+  }
+}

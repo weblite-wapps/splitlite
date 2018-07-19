@@ -17,13 +17,6 @@ export default (vueRoot) => {
   })
 
 
-  /* ShareDB */
-  // get votes from shareDB Server
-  W.share.getFromServer([]).then(() => W.start())
-  // shareDB sunbscription
-  W.share.subscribe((votes) => { vueRoot.votes = votes || [] })
-
-
   /* Customization */
   // start instantly if mode is customized
   vueRoot.customizeMode && W.start()
