@@ -53,8 +53,7 @@ export const simplifyTransLists = ({ sources, targets }) => {
 }
 
 export const extractPaymentsAndBuildTransObject = (title, wisId) => ({ sources, targets }) => {
-  if (!sources || !targets)
-    return null
+  if ((!sources || !targets) || (!sources.length || !targets.length)) return null
 
   const sumOfFinalSources = R.sum(R.pluck('value', sources))
 
