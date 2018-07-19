@@ -46,12 +46,12 @@ export default {
   },
 
   data: () => ({
-    username: 'ali',
+    username: '',
+    wisId: '',
     users: [],
     balanceGraph: [],
     transactions: [],
     currentPage: 'balances', // balances, addTrans
-    wisId: "1"
   }),
 
   computed: {
@@ -63,12 +63,15 @@ export default {
     }
   },
 
-  created() {
-    W && webliteHandler(this)
-    requests.addUser(this.username, this.wisId).then(this.fetchData)
-  },
+  created() { W && webliteHandler(this) },
 
   methods: {
+    addUser() {
+      requests
+        .addUser(this.username, this.wisId)
+        .then(this.fetchData)
+    },
+
     togglePage() {
       this.fetchData()
       this.currentPage = (this.currentPage === 'balances') ? 'addTrans' : 'balances'
