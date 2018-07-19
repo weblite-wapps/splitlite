@@ -65,7 +65,7 @@ export default {
 
   created() {
     W && webliteHandler(this)
-    this.addUser()
+    !W && this.addUser()
   },
 
   methods: {
