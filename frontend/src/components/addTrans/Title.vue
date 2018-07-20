@@ -10,6 +10,9 @@
 
 
 <script>
+// bus
+import { bus } from '../../main.js'
+
 export default {
   name: 'Header',
 
@@ -21,7 +24,9 @@ export default {
   
   data: () => ({
     title: ''
-  })
+  }),
+
+  created() { bus.$on('resetTransState', () => this.title = '') },
 }
 </script>
 

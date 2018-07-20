@@ -4,7 +4,7 @@
     :currentPage="currentPage"
     @togglePage="togglePage"
   />
-
+  
   <transition name="balances-move">
     <balances
       :balances="balances"
@@ -17,6 +17,7 @@
       v-show="currentPage === 'addTrans'"
       :users="users"
       :wis-id="wisId"
+      :connection-state="connectionState"
       @addTrans="addTrans"
     />
   </transition>
@@ -26,12 +27,16 @@
 
 <script>
 // components
-import Header from './components/Header.vue'
 import AddTrans from './components/AddTrans.vue'
 import Balances from './components/Balances.vue'
+import Warning from './helper/components/Warning.vue'
+import Header from './components/Header.vue'
 // helper
 import webliteHandler from './helper/functions/weblite.api'
 import requests from './helper/functions/requests.js'
+// bus
+import { bus } from './main.js'
+
 // W
 const { W, R } = window
 
@@ -40,9 +45,10 @@ export default {
   name: 'App',
 
   components: {
-    Header,
     Balances,
-    AddTrans
+    AddTrans,
+    Warning,
+    Header,
   },
 
   data: () => ({
@@ -52,13 +58,15 @@ export default {
     balanceGraph: [],
     transactions: [],
     currentPage: 'balances', // balances, addTrans
+
+    connectionState: 'none' // connected, none, disConnected
   }),
 
   computed: {
     balances () {
       return R.compose(
         R.map(({ target, value }) => ({ user: target, value })),
-        R.filter(({ source }) => source === this.username),
+        R.filter(({ source, value }) => source === this.username && value),
       )(this.balanceGraph)
     }
   },
@@ -69,10 +77,16 @@ export default {
   },
 
   methods: {
+    toggleConnectionWarning() {
+      this.connectionState = 'disConnected'
+      setTimeout(() => this.connectionState = 'none', 2000)
+    },
+
     addUser() {
       requests
         .addUser(this.username, this.wisId)
         .then(this.fetchData)
+        .catch(this.toggleConnectionWarning)
     },
 
     togglePage() {
@@ -86,12 +100,17 @@ export default {
           this.users = R.map(R.prop('username'), users)
           this.balanceGraph = graph.balances
         })
+        .catch(this.toggleConnectionWarning)
     },
 
     addTrans(transObj) {
       requests.addTrans(transObj)
         .then(this.fetchData)
-        .then(this.togglePage)
+        .then(() => {
+          this.togglePage()
+          bus.$emit('resetTransState')
+        })
+        .catch(this.toggleConnectionWarning)
     }
   }
 }

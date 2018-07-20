@@ -48,6 +48,8 @@ import Warning from '../helper/components/Warning.vue'
 import Title from './addTrans/Title.vue'
 // helper
 import { extractUniqueLists, simplifyTransLists, extractPaymentsAndBuildTransObject } from '../helper/functions/transactionBuilder.js'
+// bus
+import { bus } from '../main.js'
 
 // W
 const { R } = window
@@ -56,7 +58,7 @@ const { R } = window
 export default {
   name: 'AddTrans',
 
-  props: ['users', 'wisId'],
+  props: ['users', 'wisId', 'connectionState'],
 
   components: {
     SourcesSelect,
@@ -71,42 +73,44 @@ export default {
     sources: [], // {user, value}
     targets: [], // {user, value, equalValue}
     title: '',
-    splitType: 'equally'
+    splitType: 'equally',
   }),
 
   watch: {
-      sumOfSources () {
-        this.targets = this.targets.map(target => ({
-            user: target.user,
-            value: target.value,
-            equalValue: this.sumOfSources / this.targets.length}))
-      },
+    sumOfSources () {
+      this.targets = this.targets.map(target => ({
+        user: target.user,
+        value: target.value,
+        equalValue: this.sumOfSources / this.targets.length}))
+    },
   },
 
   computed: {
-      warningProperty() {
-          if (!this.title.trim())
-              return ({ show: true, msg: 'Enter transaction title!' })
-          if (this.splitType === 'unequally' && this.sumOfSources != this.sumOfTargets)
-              return ({ show: true, msg: 'Sum of sources and targets are not equal !' })
-          if (!this.resultTrans || !this.resultTrans.payments.length)
-              return ({ show: true, msg: 'No payment needed sofar!' })
-          return ({ show: false, msg: '' })
-      },
+    warningProperty() {
+        if (this.connectionState === 'disConnected')
+          return ({ show: true, msg: "Can NOT connect to server :(" })
+        if (!this.title.trim())
+          return ({ show: true, msg: 'Enter transaction title!' })
+        if (this.splitType === 'unequally' && this.sumOfSources != this.sumOfTargets)
+          return ({ show: true, msg: 'Sum of sources and targets are not equal !' })
+        if (!this.resultTrans || !this.resultTrans.payments.length)
+          return ({ show: true, msg: 'No payment needed so far!' })
+        return ({ show: false, msg: '' })
+    },
 
-      sumOfSources() { return R.sum(R.pluck('value', this.sources)) },
+    sumOfSources() { return R.sum(R.pluck('value', this.sources)) },
 
-      sumOfTargets() { return R.sum(R.pluck('value', this.targets)) },
+    sumOfTargets() { return R.sum(R.pluck('value', this.targets)) },
 
-      currentTargetProperty() { return (this.splitType === 'unequally') ? 'value' : 'equalValue' },
+    currentTargetProperty() { return (this.splitType === 'unequally') ? 'value' : 'equalValue' },
 
-      resultTrans() {
-        const transBuilder = R.compose(extractPaymentsAndBuildTransObject(this.title, this.wisId),
-                             simplifyTransLists,
-                             extractUniqueLists(this.users, this.currentTargetProperty))
-        
-        return transBuilder(this.sources, this.targets)
-      },
+    resultTrans() {
+      const transBuilder = R.compose(extractPaymentsAndBuildTransObject(this.title, this.wisId),
+                            simplifyTransLists,
+                            extractUniqueLists(this.users, this.currentTargetProperty))
+      
+      return transBuilder(this.sources, this.targets)
+    },
   },
 
   methods: {
@@ -116,6 +120,13 @@ export default {
         value,
         equalValue: this.sumOfSources / (this.targets.length),
       }), this.targets)
+    },
+
+    resetState() {
+      this.title = ''
+      this.sources = []
+      this.targets = []
+      this.splitType = 'equally'
     },
 
     addTrans() { this.$emit('addTrans', this.resultTrans) },
@@ -142,7 +153,9 @@ export default {
     addSource() { if (this.users.length) this.sources.push({ user: this.users[0], value: 0 }) },
 
     removeSource(index) { this.sources.splice(index, 1) },
-  }
+  },
+  
+  created() { bus.$on('resetTransState', this.resetState) }
 }
 </script>
 

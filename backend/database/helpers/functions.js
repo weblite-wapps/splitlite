@@ -19,6 +19,8 @@ const updateGraphWithPaymentUnit = payment => balances => {
 const updateGraph = ({ wisId, payments }) => models.BalanceGraph
   .findOne({ wisId })
   .then((graph) => {
+
+    // Todo: Reduce refactor
     R.pipe(...R.map(updateGraphWithPaymentUnit, payments))(graph.balances)
     return models.BalanceGraph.updateOne({ wisId }, { balances: graph.balances }).exec()
   })
