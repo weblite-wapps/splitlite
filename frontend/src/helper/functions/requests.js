@@ -1,22 +1,24 @@
 import request from 'superagent'
+// config
+import config from '../../config'
 
 
 export default {
   addUser: (username, wisId) => request
-    .post('http://localhost:3000/users/add')
+    .post(`${config.server}/users/add`)
     .send({ username, wisId }),
 
   fetchUsers: wisId => request
-    .get('http://localhost:3000/users/fetch')
+    .get(`${config.server}/users/fetch`)
     .query({ wisId })
     .then(res => res.body),
 
   fetchGraph: wisId => request
-    .get('http://localhost:3000/graph/fetch')
+    .get(`${config.server}/graph/fetch`)
     .query({ wisId })
     .then(res => res.body),
 
   addTrans: transObj => request
-    .post('http://localhost:3000/transaction/add')
-    .send(transObj),
+    .post(`${config.server}/transaction/add`)
+    .send(transObj)
 }
