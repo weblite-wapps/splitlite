@@ -33,13 +33,11 @@ export default {
   background: #EAEAEA;
   display: flex;
   flex-direction: row;
-
   align-items: center;
   justify-content: space-between;
   padding: 0 7px;
   margin-bottom: 10px;
   border-radius: 2px;
-
   box-shadow: 0px 2px 5px 1px rgba(32, 32, 32, 0.514);
 }
 
@@ -49,11 +47,11 @@ export default {
 }
 
 .balance-item-value-positive {
-    color: rgb(14, 134, 14);
+  color: rgb(14, 134, 14);
 }
 
 .balance-item-value-negative {
-    color: rgb(224, 13, 13);
+  color: rgb(224, 13, 13);
 }
 
 .balance-item-value-positive::before {
@@ -67,5 +65,4 @@ export default {
 .balance-item-value-positive::after, .balance-item-value-negative::after {
   content: 'T';
 }
-
 </style>

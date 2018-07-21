@@ -4,7 +4,7 @@
     :currentPage="currentPage"
     @togglePage="togglePage"
   />
-  
+
   <transition name="balances-move">
     <balances
       :balances="balances"
@@ -58,7 +58,6 @@ export default {
     balanceGraph: [],
     transactions: [],
     currentPage: 'balances', // balances, addTrans
-
     connectionState: 'none' // connected, none, disConnected
   }),
 

@@ -23,7 +23,7 @@ const simplifyUserTrans = src => transPair => {
   const { sources, targets } = transPair
   const srcIndex = R.findIndex(({ user }) => user == src.user, sources)
   const tarIndex = R.findIndex(({ user }) => user == src.user, targets)
-  
+
   // Todo: Refactor
   if (srcIndex < 0 || tarIndex < 0)
     return transPair
@@ -32,9 +32,6 @@ const simplifyUserTrans = src => transPair => {
   const sourceValue = sources[srcIndex].value
   const valuesDiff = sourceValue - targetValue
 
-  // return R.cod([
-  //   [R.lte(0), () => ({ sources: updateValueWithIndex(srcIndex, valuesDiff)(sources), targets:  updateValueWithIndex(tarIndex, 0)(targets)})]
-  // ], valuesDiff)
 
   if (valuesDiff >= 0) {
     const updatedSources = updateValueWithIndex(srcIndex, valuesDiff)(sources)
@@ -52,31 +49,31 @@ const simplifyUserTrans = src => transPair => {
 export const simplifyTransLists = ({ sources, targets }) => {
   if (!sources.length || !targets.length) return ({ sources: null, targets: null })
 
-  
+
   // Todo: Reduce refactor
   const simplifier = R.pipe(...R.map(simplifyUserTrans, sources))
   const simplifiedPair = simplifier({ sources, targets })
-  
+
   const finalSources = R.filter(R.prop('value'), simplifiedPair.sources)
   const finalTargets = R.filter(R.prop('value'), simplifiedPair.targets)
-  
-  
+
+
   return ({ sources: finalSources, targets: finalTargets })
 }
 
 
 export const extractPaymentsAndBuildTransObject = (title, wisId) => ({ sources, targets }) => {
   if ((!sources || !targets) || (!sources.length || !targets.length)) return null
-  
+
   const sumOfFinalSources = R.sum(R.pluck('value', sources))
-  
+
   const updatePaymentwithTarget = target => {
     const ownings = R.map(src => ({ from: target.user, to: src.user, value: src.value / sumOfFinalSources * target.value }), sources)
     return R.insertAll(0, ownings)
   }
-  
+
   // Todo: Reduce refactor
   const payments = R.pipe(...R.map(updatePaymentwithTarget, targets))([])
-  
+
   return ({ title, sources, payments, wisId })
 }
