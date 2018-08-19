@@ -108,7 +108,7 @@ export default {
       const transBuilder = R.compose(extractPaymentsAndBuildTransObject(this.title, this.wisId),
                             simplifyTransLists,
                             extractUniqueLists(this.users, this.currentTargetProperty))
-      
+
       return transBuilder(this.sources, this.targets)
     },
   },
@@ -154,7 +154,7 @@ export default {
 
     removeSource(index) { this.sources.splice(index, 1) },
   },
-  
+
   created() { bus.$on('resetTransState', this.resetState) }
 }
 </script>

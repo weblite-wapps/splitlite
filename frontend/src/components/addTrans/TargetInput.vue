@@ -4,7 +4,7 @@
     <select v-model="targets[index].user" :class="$style['user-select']">
         <option
         :class="$style['user-option']"
-        v-for="(user, selectIndex) in users" 
+        v-for="(user, selectIndex) in users"
         :value="user"
         :key="selectIndex">
             {{ user }}
@@ -12,9 +12,9 @@
     </select>
   </div>
   <div :class="$style['value-input']">
-      <input 
-        v-model="targets[index][curProperty]" 
-        type="number" 
+      <input
+        v-model="targets[index][curProperty]"
+        type="number"
         :readonly="splitType === 'equally'"
         :class="$style['text-input']"
       />
@@ -37,7 +37,7 @@ export default {
 
 <style module>
 .target-input {
-  width: 300px;
+  width: 320px;
   min-height: 35px;
 
   display: flex;
@@ -55,8 +55,8 @@ export default {
   border-bottom: 1px gray solid;
 
   color: lightgray;
-
-  min-width: 200px;
+  max-width: 120px;
+  min-width: 20px;
 
   -webkit-transition: all 0.2s ease;
   transition: all 0.2s ease;
@@ -85,7 +85,10 @@ export default {
   transition: all 0.2s ease;
 
   font-size: 14px;
-  margin-top: 1px
+  margin-top: 1px;
+  width:140px;
+  overflow:hidden;
+
 }
 
 .user-select:focus {
@@ -95,11 +98,16 @@ export default {
 .user-option {
   background: rgb(78, 78, 78);
   color: lightgray;
+
 }
 
 .user-option:checked {
   background: rgb(255, 233, 136);
   color: rgb(78, 78, 78);
+}
+
+.value-input {
+  max-width: 120px;
 }
 
 </style>
