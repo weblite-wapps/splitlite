@@ -1,7 +1,7 @@
 {
   "name": "splitlite",
   "id": "5b502b48e8ac737dd0225991",
-  "instancable": true,
+  "instantiable": true,
   "creator": false,
   "inline": true,
   "shareDB": false,
