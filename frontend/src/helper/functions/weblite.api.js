@@ -1,14 +1,22 @@
-// W && R
-const { W, R } = window
+// W
+const { W } = window  
 
+export default vueRoot =>
+  W.setHooks({
+    wappWillStart(start) {
+      /* Load Data */
+      // get user
+      W.loadData().then(
+        ({ user: { name } }) => {
+          vueRoot.username = name
+          vueRoot.wisId = W.wisId
 
-export default (vueRoot) => {
-  // get Customize Value
-  W.loadData().then(({ user: { name } }) => {
-    vueRoot.username = name
-    vueRoot.wisId = W.wisId
-
-    W.start()
-    vueRoot.addUser()
+          start()
+          vueRoot.addUser()
+        },
+      )
+    },
   })
-}
+
+
+
