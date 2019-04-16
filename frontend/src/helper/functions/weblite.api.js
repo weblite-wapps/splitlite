@@ -11,8 +11,8 @@ export default vueRoot =>
           vueRoot.username = name
           vueRoot.wisId = W.wisId
 
-          start()
           vueRoot.addUser()
+          start()
         },
       )
     },

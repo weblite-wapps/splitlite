@@ -11,8 +11,7 @@
   "searchable": true,
   "servIndexes": {
     "inline": "index",
-    "main": "index",
-    "customize": "index"
+    "main": "index"
   },
   "version": "0.1.0"
 }
