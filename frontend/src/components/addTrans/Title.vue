@@ -1,11 +1,13 @@
 <template>
-<div :class="$style['title']">
-  <span :class="$style['title-label']"> </span>
-  <input 
-    :class="$style['text-input']" 
-    v-model="title"
-    placeholder="Title"/>
-</div>
+  <div :class="$style['title']">
+    <span :class="$style['title-label']" />
+
+    <input 
+      :class="$style['text-input']" 
+      v-model="title"
+      placeholder="Title"
+    />
+  </div>
 </template>
 
 
@@ -15,16 +17,16 @@ import { bus } from '../../main.js'
 
 export default {
   name: 'Header',
+  
+  data: () => ({
+    title: ''
+  }),
 
   watch: {
     title(newTitle) {
       this.$emit('update:title', newTitle)
     }
   },
-  
-  data: () => ({
-    title: ''
-  }),
 
   created() { bus.$on('resetTransState', () => this.title = '') },
 }
@@ -32,7 +34,6 @@ export default {
 
 
 <style module>
-
 .title {
   width: 330px;
   min-height: 40px;

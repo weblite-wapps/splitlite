@@ -1,27 +1,27 @@
 <template>
-<div class="root">
-  <Header
-    :currentPage="currentPage"
-    @togglePage="togglePage"
-  />
-
-  <transition name="balances-move">
-    <balances
-      :balances="balances"
-      v-show="currentPage === 'balances'"
+  <div class="root">
+    <Header
+      :currentPage="currentPage"
+      @togglePage="togglePage"
     />
-  </transition>
 
-  <transition name="add-trans-move">
-    <add-trans
-      v-show="currentPage === 'addTrans'"
-      :users="users"
-      :wis-id="wisId"
-      :connection-state="connectionState"
-      @addTrans="addTrans"
-    />
-  </transition>
-</div>
+    <transition name="balances-move">
+      <balances
+        :balances="balances"
+        v-show="currentPage === 'balances'"
+      />
+    </transition>
+
+    <transition name="add-trans-move">
+      <add-trans
+        v-show="currentPage === 'addTrans'"
+        :users="users"
+        :wis-id="wisId"
+        :connection-state="connectionState"
+        @addTrans="addTrans"
+      />
+    </transition>
+  </div>
 </template>
 
 
@@ -29,7 +29,6 @@
 // components
 import AddTrans from './components/AddTrans.vue'
 import Balances from './components/Balances.vue'
-import Warning from './helper/components/Warning.vue'
 import Header from './components/Header.vue'
 // helper
 import webliteHandler from './helper/functions/weblite.api'
@@ -47,7 +46,6 @@ export default {
   components: {
     Balances,
     AddTrans,
-    Warning,
     Header,
   },
 

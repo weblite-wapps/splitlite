@@ -1,35 +1,38 @@
 <template>
-<div :class="$style['target-input']">
-  <div :class="$style['user-select']">
-    <select v-model="targets[index].user" :class="$style['user-select']">
+  <div :class="$style['target-input']">
+    <div :class="$style['user-select']">
+      <select v-model="targets[index].user" :class="$style['user-select']">
         <option
-        :class="$style['user-option']"
-        v-for="(user, selectIndex) in users"
-        :value="user"
-        :key="selectIndex">
-            {{ user }}
+          v-for="(user, selectIndex) in users"
+          :key="selectIndex"
+          :class="$style['user-option']"
+          :value="user"
+        >
+          {{ user }}
         </option>
-    </select>
-  </div>
-  <div :class="$style['value-input']">
+      </select>
+    </div>
+
+    <div :class="$style['value-input']">
       <input
         v-model="targets[index][curProperty]"
         type="number"
         :readonly="splitType === 'equally'"
         :class="$style['text-input']"
       />
+    </div>
+
+    <div :class="[$style['remove-target'], 'noselect']">
+      <i @click="$emit('remove', index)"> delete </i>
+    </div>
   </div>
-  <div :class="[$style['remove-target'], 'noselect']">
-    <i @click="$emit('remove', index)"> delete </i>
-  </div>
-</div>
 </template>
 
 
 <script>
-
 export default {
   name: 'SourceUnit',
+
   props: ['users', 'targets', 'index', 'curProperty', 'splitType']
 }
 </script>
@@ -109,5 +112,4 @@ export default {
 .value-input {
   max-width: 120px;
 }
-
 </style>

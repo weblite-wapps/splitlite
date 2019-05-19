@@ -1,8 +1,8 @@
 <template>
-<div :class="[$style.root, 'noselect']" @click="$emit('click')">
+  <div :class="[$style.root, 'noselect']" @click="$emit('click')">
     <div :class="[$style['checkbox'], checked ? $style['selected'] : $style['unselected']]"/>
     <span :class="$style['label']"> {{ label }} </span>
-</div>
+  </div>
 </template>
 
 

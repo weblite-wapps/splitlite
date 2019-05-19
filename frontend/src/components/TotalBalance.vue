@@ -1,13 +1,13 @@
 <template>
-<div :class="$style['total-balance']">
-  <div :class="$style['total-balance-caption']">
+  <div :class="$style['total-balance']">
+    <div :class="$style['total-balance-caption']">
       Total Balance
-  </div>
+    </div>
 
-  <div :class="$style[`total-balance-value-${(totalBalance <= 0) ? 'positive' : 'negative'}`]">
+    <div :class="$style[`total-balance-value-${(totalBalance <= 0) ? 'positive' : 'negative'}`]">
       {{ getPresentingForm(totalBalance) }}
+    </div>
   </div>
-</div>
 </template>
 
 

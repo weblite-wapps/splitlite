@@ -1,16 +1,16 @@
 <template>
-<div :class="$style['balances']">
-  <div :class="$style['items']">
-    <BalanceItem
-      v-for="(balanceItem, index) in balances"
-      :user="balanceItem.user"
-      :value="balanceItem.value"
-      :key="index"
-    />
-  </div>
+  <div :class="$style['balances']">
+    <div :class="$style['items']">
+      <BalanceItem
+        v-for="(balanceItem, index) in balances"
+        :user="balanceItem.user"
+        :value="balanceItem.value"
+        :key="index"
+      />
+    </div>
 
-  <total-balance :total-balance="totalBalance" />
-</div>
+    <TotalBalance :total-balance="totalBalance" />
+  </div>
 </template>
 
 
@@ -36,7 +36,7 @@ export default {
 
   computed: {
     totalBalance () { return R.sum(R.pluck('value', this.balances)) },
-  }
+  },
 }
 </script>
 

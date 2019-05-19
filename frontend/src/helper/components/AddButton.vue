@@ -1,7 +1,7 @@
 <template>
-<div :class="$style['button-container']" @click="$emit('click')">
-  {{ label }}
-</div>
+  <div :class="$style['button-container']" @click="$emit('click')">
+    {{ label }}
+  </div>
 </template>
 
 

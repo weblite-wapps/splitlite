@@ -1,10 +1,9 @@
 <template>
-<div v-if="show === true" class="warning">
-  <span> <i> warning </i> </span>
-  <span class="warning-text">{{ message }}</span>
-</div>
+  <div v-if="show === true" class="warning">
+    <span> <i> warning </i> </span>
+    <span class="warning-text">{{ message }}</span>
+  </div>
 </template>
-
 
 <script>
 export default {
@@ -13,7 +12,6 @@ export default {
   props: ['show', 'message'],
 }
 </script>
-
 
 <style scoped>
 .warning {

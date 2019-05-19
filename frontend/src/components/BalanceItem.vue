@@ -1,13 +1,13 @@
 <template>
-<div :class="$style['balance-item']">
-  <div :class="$style['balance-item-name']">
+  <div :class="$style['balance-item']">
+    <div :class="$style['balance-item-name']">
       {{ user }}
-  </div>
+    </div>
 
-  <div :class="(value <= 0) ? $style['balance-item-value-positive'] : $style['balance-item-value-negative']">
+    <div :class="(value <= 0) ? $style['balance-item-value-positive'] : $style['balance-item-value-negative']">
       {{ getPresentingForm(value) }}
+    </div>
   </div>
-</div>
 </template>
 
 

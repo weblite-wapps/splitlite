@@ -1,8 +1,9 @@
 <template>
-<div :class="$style['targets']">
-  <div :class="$style['section-label']"> Targets </div>
-  <div :class="$style['input-items']">
-    <div v-for="(target, index) in targets " :key="index" :class="$style['input-item']">
+  <div :class="$style['targets']">
+    <div :class="$style['section-label']"> Targets </div>
+
+    <div :class="$style['input-items']">
+      <div v-for="(target, index) in targets " :key="index" :class="$style['input-item']">
         <TargetInput
           :users="users"
           :targets="targets"
@@ -11,25 +12,29 @@
           :splitType="splitType"
           @remove="$emit('remove', index)"
         />
-    </div>
-    <div :class="[$style['add-user'], 'noselect']">
-        <i @click="$emit('add')"> add </i>
+      </div>
+
+      <div :class="[$style['add-user'], 'noselect']">
+          <i @click="$emit('add')"> add </i>
+      </div>
     </div>
   </div>
-</div>
 </template>
 
 
 <script>
-// Components
+// components
 import TargetInput from './TargetInput.vue'
 
 export default {
   name: 'TargetsSelect',
+
   components: {
     TargetInput
   },
+
   props: ['targets', 'users', 'curProperty', 'splitType'],
+
   methods: {
     addTarget() {
       if (this.users.length > 0) {
@@ -41,6 +46,7 @@ export default {
           this.targets.push( {user: this.users[0], value: 0, equalValue: 0} )
       }
     },
+
     removeTarget(index) {
       this.targets.splice(index, 1);
     }

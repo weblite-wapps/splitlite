@@ -1,32 +1,36 @@
 <template>
-<div :class="$style['sources']">
-  <div :class="$style['section-label']"> Sources </div>
-  <div :class="$style['input-items']">
-    <div v-for="(source, index) in sources" :key="index">
+  <div :class="$style['sources']">
+    <div :class="$style['section-label']"> Sources </div>
+
+    <div :class="$style['input-items']">
+      <div v-for="(source, index) in sources" :key="index">
         <SourceInput
           :users="users"
           :sources="sources"
           :index="index"
           @remove="$emit('remove', index)"
         />
-    </div>
-    <div :class="[$style['add-user'], 'noselect']">
+      </div>
+
+      <div :class="[$style['add-user'], 'noselect']">
         <i @click="$emit('add')"> add </i>
+      </div>
     </div>
   </div>
-</div>
 </template>
 
 
 <script>
-// Components
+// components
 import SourceInput from './SourceInput.vue'
 
 export default {
   name: 'SourcesSelect',
+
   components: {
     SourceInput
   },
+
   props: ['sources', 'users']
 }
 </script>

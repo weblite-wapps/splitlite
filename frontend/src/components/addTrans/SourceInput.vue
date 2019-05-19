@@ -1,35 +1,38 @@
 <template>
-<div :class="$style['source-input']">
-  <div :class="$style['user-input']">
-    <select v-model="sources[index].user" :class="$style['user-select']">
+  <div :class="$style['source-input']">
+    <div :class="$style['user-input']">
+      <select v-model="sources[index].user" :class="$style['user-select']">
         <option
-        :class="$style['user-option']"
-        v-for="(user, selectIndex) in users"
-        :value="user"
-        :key="selectIndex">
-            {{ user }}
+          v-for="(user, selectIndex) in users"
+          :class="$style['user-option']"
+          :key="selectIndex"
+          :value="user"
+        >
+          {{ user }}
         </option>
-    </select>
-  </div>
-  <div :class="$style['value-input']">
+      </select>
+    </div>
+
+    <div :class="$style['value-input']">
       <input
         v-model="sources[index].value"
         type="number"
         step="0.001"
         :class="$style['text-input']"
       />
+    </div>
+
+    <div :class="[$style['remove-source'], 'noselect']">
+      <i @click="$emit('remove', index)"> delete </i>
+    </div>
   </div>
-  <div :class="[$style['remove-source'], 'noselect']">
-    <i @click="$emit('remove', index)"> delete </i>
-  </div>
-</div>
 </template>
 
 
 <script>
-
 export default {
   name: 'SourceUnit',
+
   props: ['users', 'sources', 'index'],
 }
 </script>
@@ -64,7 +67,6 @@ export default {
   font-weight: 200;
   font-size: 16px;
   letter-spacing: .9px;
-
   text-align: justify;
   padding-left: 5px;
 }
@@ -107,11 +109,7 @@ export default {
 
 }
 
-
 .source-input > .value-input {
   max-width: 120px  ;
 }
-
-
-
 </style>

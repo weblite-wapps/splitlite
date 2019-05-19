@@ -1,26 +1,26 @@
 <template>
-<div :class="$style['type-section']">
-  <span :class="$style['split-caption']"> split type </span>
+  <div :class="$style['type-section']">
+    <span :class="$style['split-caption']"> split type </span>
 
-  <div :class="$style['types']">
-    <checkbox
-      label="Equally"
-      :checked="splitType == 'equally'"
-      @click="changeType('equally')"
-    />
+    <div :class="$style['types']">
+      <checkbox
+        label="Equally"
+        :checked="splitType == 'equally'"
+        @click="changeType('equally')"
+      />
 
-    <checkbox
-      label="UnEqually"
-      :checked="splitType == 'unequally'"
-      @click="changeType('unequally')"
-    />
+      <checkbox
+        label="UnEqually"
+        :checked="splitType == 'unequally'"
+        @click="changeType('unequally')"
+      />
+    </div>
   </div>
-</div>
 </template>
 
 
 <script>
-// Components
+// components
 import Checkbox from '../../helper/components/Checkbox.vue'
 
 
@@ -28,8 +28,8 @@ export default {
   name: 'TypeSelection',
 
   components: {
-      Checkbox
-    },
+    Checkbox
+  },
 
   props: ['splitType'],
 
